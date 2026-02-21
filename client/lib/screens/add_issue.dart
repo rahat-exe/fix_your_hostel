@@ -45,22 +45,22 @@ class _AddIssue extends State<AddIssue> {
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  fixedSize: Size(320, 50),
-                  textStyle: TextStyle(fontSize: 20),
+                  fixedSize: Size(380, 50),
+                  textStyle: TextStyle(fontSize: 15),
                 ),
                 child: Text('Add Image'),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(14.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       onPressed: () {},
-                      style: TextButton.styleFrom(fixedSize: Size(120, 30)),
+                      style: TextButton.styleFrom(fixedSize: Size(150, 50)),
                       child: Text('Submit'),
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(width: 60),
                     ElevatedButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(

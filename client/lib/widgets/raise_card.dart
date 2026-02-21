@@ -1,4 +1,5 @@
 import 'package:client/main.dart';
+import 'package:client/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class RaiseCard extends StatelessWidget {
@@ -18,8 +19,9 @@ class RaiseCard extends StatelessWidget {
       padding: EdgeInsets.all(12),
       margin: EdgeInsets.only(left: 16, right: 16, top: 20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSecondary.withValues(alpha: .96),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.borderMuted),
         boxShadow: [
           BoxShadow(
             color: colorScheme.primary.withValues(alpha: 0.05),
