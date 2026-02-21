@@ -5,9 +5,11 @@ class IssueButton extends StatelessWidget {
     super.key,
     required this.buttonTitle,
     required this.onTap,
+    required this.buttonIcon,
   });
   final String buttonTitle;
   final void Function() onTap;
+  final IconData buttonIcon;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,14 +34,22 @@ class IssueButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Text(
-          buttonTitle,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              buttonTitle,
 
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 18,
-          ),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(width: 3),
+            Icon(buttonIcon, color: Colors.white),
+          ],
         ),
       ),
     );

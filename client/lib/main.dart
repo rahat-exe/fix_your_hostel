@@ -18,7 +18,8 @@ final darktheme = ThemeData().copyWith(
   colorScheme: ColorScheme.dark(
     surface: AppColors.bgLight,
     primary: AppColors.primary,
-    secondary: AppColors.secondary,
+    secondary: AppColors.bgLight,
+    tertiary: Colors.grey[900],
     error: AppColors.danger,
   ),
 
@@ -26,7 +27,11 @@ final darktheme = ThemeData().copyWith(
     bodyLarge: TextStyle(color: AppColors.text),
     bodyMedium: TextStyle(color: AppColors.textMuted),
   ),
-
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: AppColors.bg,
+    unselectedItemColor: Colors.white30,
+    selectedItemColor: Colors.white54,
+  ),
   dividerColor: AppColors.borderMuted,
 );
 

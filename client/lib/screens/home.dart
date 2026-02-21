@@ -1,3 +1,5 @@
+// import 'package:client/main.dart';
+import 'package:client/screens/add_complaint.dart';
 import 'package:client/screens/add_issue.dart';
 import 'package:client/theme/theme.dart';
 import 'package:client/widgets/issue_button.dart';
@@ -10,6 +12,12 @@ class Home extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (ctx) => const AddIssue()));
+  }
+
+  void toAddComplaintPage(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (ctx) => AddComplaint()));
   }
 
   @override
@@ -35,36 +43,52 @@ class Home extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(left: 16),
                   alignment: Alignment.topLeft,
-                  child: Text(
-                    'Quick Actions',
-
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.8),
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IssueButton(
-                        buttonTitle: 'My Room Issue',
-                        onTap: () {
-                          toAddIssuePage(context);
-                        },
+                      Text(
+                        'Quick Actions',
+
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.8),
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      SizedBox(width: 10),
-                      IssueButton(
-                        buttonTitle: 'Submit Hostel Complaint',
-                        onTap: () {},
+                      SizedBox(width: 4),
+                      Icon(
+                        Icons.bolt,
+                        size: 30,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ],
                   ),
                 ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IssueButton(
+                      buttonTitle: 'My Room Issue',
+                      onTap: () {
+                        toAddIssuePage(context);
+                      },
+                      buttonIcon: Icons.home,
+                    ),
+                    SizedBox(width: 10),
+                    IssueButton(
+                      buttonTitle: 'Submit\nHostel Complaint',
+                      onTap: () {
+                        toAddComplaintPage(context);
+                      },
+                      buttonIcon: Icons.apartment,
+                    ),
+                  ],
+                ),
+
                 Container(
                   padding: EdgeInsets.only(left: 16, top: 10),
                   alignment: Alignment.topLeft,
@@ -107,6 +131,27 @@ class Home extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.dashboard,
+              color: Theme.of(context).colorScheme.onSurface,
+              size: 28,
+            ),
+
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.onSurface,
+              size: 28,
+            ),
+            label: 'account',
+          ),
+        ],
       ),
     );
   }
