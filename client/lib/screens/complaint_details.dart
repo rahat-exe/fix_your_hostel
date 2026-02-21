@@ -18,6 +18,12 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Reported Complaint',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.all(15),
@@ -25,11 +31,6 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Reported Complaint ',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 15),
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
@@ -63,6 +64,27 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 padding: EdgeInsets.all(17),
                 child: Text('Images section', style: TextStyle(fontSize: 20)),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Raised By : ',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.person,
+                    size: 28,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  SizedBox(width: 3),
+                  Text(
+                    widget.raisedBy,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

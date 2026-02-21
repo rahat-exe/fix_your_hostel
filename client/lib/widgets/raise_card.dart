@@ -48,6 +48,8 @@ class RaiseCard extends StatelessWidget {
             ),
             Text(
               description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: Theme.of(
                   context,

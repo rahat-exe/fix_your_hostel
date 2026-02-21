@@ -60,7 +60,7 @@ class Home extends StatelessWidget {
     Issues(
       title: 'Water leakage',
       description:
-          'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury',
+          'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury,you wont be at the dawn this is calling out for you, this calling out for you ',
       raisedBy: 'Rahat Islam',
     ),
   ];
