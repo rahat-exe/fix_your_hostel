@@ -38,7 +38,7 @@ const issueSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["pending", "in-progess", "resolved"],
+      enum: ["pending", "in-progress", "resolved"],
       default: "pending",
       // index: true,
     },
@@ -48,7 +48,7 @@ const issueSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    upvotes: [
+    downvotes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
