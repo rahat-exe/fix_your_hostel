@@ -1,4 +1,5 @@
 import Issue from "../models/issue.models.js";
+import cloudinary from '../config/cloudinary.js'
 
 export const createIssue = async (req, res) => {
   try {
@@ -10,11 +11,30 @@ export const createIssue = async (req, res) => {
         .json({ message: "Title and visibility is required" });
     }
 
+    let uploadedImage;
+
+    if(req.file){
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream({
+          folder:"fix-your-hostel"
+        },
+        (error, result) =>{
+          if(error) reject(error);
+          else resolve(result)
+        }
+      )
+      stream.end(req.file.buffer)
+      })
+      uploadedImage = uploadResult.secure_url;
+
+    }
+
     const issue = await Issue.create({
       title,
       description,
       visibility,
       user: req.user.id,
+      images: uploadedImage ? [uploadedImage] : []
     });
 
     res.status(200).json({

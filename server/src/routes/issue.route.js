@@ -2,10 +2,11 @@ import express from 'express'
 import { createIssue, getIssues } from '../controllers/issue.controllers.js'
 import authMiddleware from '../middleware/auth.middleware.js'
 import { downvotesIssue, upvotesIssue } from '../controllers/votes.controllers.js';
+import uplaod from '../middleware/uplaod.middleware.js';
 
 const router = express.Router();
 
-router.post('/createIssue', authMiddleware, createIssue);
+router.post('/createIssue', authMiddleware, uplaod.single("image"),  createIssue);
 router.get('/getIssues',authMiddleware,getIssues)
 
 router.post("/:id/upvotes", authMiddleware, upvotesIssue)
