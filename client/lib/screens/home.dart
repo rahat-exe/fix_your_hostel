@@ -1,13 +1,15 @@
 // import 'package:client/main.dart';
+import 'package:client/class/issues.dart';
 import 'package:client/screens/add_complaint.dart';
 import 'package:client/screens/add_issue.dart';
+import 'package:client/screens/complaint_details.dart';
 import 'package:client/theme/theme.dart';
 import 'package:client/widgets/issue_button.dart';
 import 'package:client/widgets/raise_card.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Home({super.key});
   void toAddIssuePage(BuildContext context) {
     Navigator.of(
       context,
@@ -19,6 +21,49 @@ class Home extends StatelessWidget {
       context,
     ).push(MaterialPageRoute(builder: (ctx) => AddComplaint()));
   }
+
+  void toComplaintDetails(
+    BuildContext context,
+    String title,
+    String description,
+    String raisedBy,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => ComplaintDetails(
+          title: title,
+          description: description,
+          raisedBy: raisedBy,
+        ),
+      ),
+    );
+  }
+
+  final List<Issues> _hostelComplaint = [
+    Issues(
+      title: 'Uneccessary High fees',
+      description:
+          'Hostel facilities are not improved but they are still increasing the amount',
+      raisedBy: 'Nayan Jyoti Borah',
+    ),
+    Issues(
+      title: 'Food issue',
+      description: 'Bad food quality',
+      raisedBy: 'Afruz alam Barbhuyan',
+    ),
+    Issues(
+      title: 'Dirty washrooms',
+      description:
+          'All the washrooms are dirty, there no mugs, taps are broker, hooks are broken',
+      raisedBy: 'Riddhi sundar sahu',
+    ),
+    Issues(
+      title: 'Water leakage',
+      description:
+          'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury',
+      raisedBy: 'Rahat Islam',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -104,29 +149,20 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                RaiseCard(
-                  title: 'Uneccessary High fees',
-                  description:
-                      'Hostel facilities are not improved but they are still increasing the amount',
-                  raiser: 'Nayan Jyoti Borah',
-                ),
-                RaiseCard(
-                  title: 'Food issue',
-                  description: 'Bad food quality',
-                  raiser: 'Afruz alam Barbhuyan',
-                ),
-                RaiseCard(
-                  title: 'Dirty washrooms',
-                  description:
-                      'All the washrooms are dirty, there no mugs, taps are broker, hooks are broken',
-                  raiser: 'Riddhi sundar sahu',
-                ),
-                RaiseCard(
-                  title: 'Water leakage',
-                  description:
-                      'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury',
-                  raiser: 'Rahat Islam',
-                ),
+                for (final complaints in _hostelComplaint)
+                  RaiseCard(
+                    title: complaints.title,
+                    description: complaints.description,
+                    raiser: complaints.raisedBy,
+                    onTap: () {
+                      toComplaintDetails(
+                        context,
+                        complaints.title,
+                        complaints.description,
+                        complaints.raisedBy,
+                      );
+                    },
+                  ),
               ],
             ),
           ),

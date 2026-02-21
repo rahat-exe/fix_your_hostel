@@ -30,9 +30,14 @@ extension CategoriesX on Categories {
 }
 
 class Issues {
-  const Issues(this.title, this.description, this.raisedBy, this.category);
+  Issues({
+    required this.title,
+    required this.description,
+    required this.raisedBy,
+    this.category,
+  });
   final String title;
   final String description;
   final String raisedBy;
-  final Categories category;
+  Categories? category;
 }
