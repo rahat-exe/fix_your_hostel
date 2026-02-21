@@ -5,11 +5,18 @@ import 'package:client/screens/add_issue.dart';
 import 'package:client/screens/complaint_details.dart';
 import 'package:client/theme/theme.dart';
 import 'package:client/widgets/issue_button.dart';
+import 'package:client/widgets/main_drawer.dart';
 import 'package:client/widgets/raise_card.dart';
 import 'package:flutter/material.dart';
 
-class Home extends StatelessWidget {
-  Home({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   void toAddIssuePage(BuildContext context) {
     Navigator.of(
       context,
@@ -60,7 +67,7 @@ class Home extends StatelessWidget {
     Issues(
       title: 'Water leakage',
       description:
-          'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury,you wont be at the dawn this is calling out for you, this calling out for you ',
+          'During rain seasons water leaks from the gaps of stairs and it could make someone fall in stairs and cost him a severe injury, you wont be at the dawn this is calling out for you, this calling out for you ',
       raisedBy: 'Rahat Islam',
     ),
   ];
@@ -68,6 +75,16 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        title: const Text(''),
+      ),
+      drawer: MainDrawer(),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -84,7 +101,6 @@ class Home extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
                 Container(
                   padding: EdgeInsets.only(left: 16),
                   alignment: Alignment.topLeft,
@@ -92,7 +108,6 @@ class Home extends StatelessWidget {
                     children: [
                       Text(
                         'Quick Actions',
-
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Theme.of(
                             context,
@@ -167,27 +182,6 @@ class Home extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.dashboard,
-              color: Theme.of(context).colorScheme.onSurface,
-              size: 28,
-            ),
-
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.onSurface,
-              size: 28,
-            ),
-            label: 'account',
-          ),
-        ],
       ),
     );
   }
