@@ -5,6 +5,7 @@ dotenv.config()
 import connectDB from './config/db.js'
 import { seedAdmin } from './config/seedAdmin.js';
 import authRoutes from './routes/auth.route.js'
+import issueRoute from './routes/issue.route.js'
 
 const PORT = process.env.PORT
 
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth',authRoutes)
+app.use('/api/issue', issueRoute)
 
 app.listen(PORT, ()=> {
     console.log("Server running on Port: ", PORT)

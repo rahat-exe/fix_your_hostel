@@ -23,6 +23,11 @@ const issueSchema = new mongoose.Schema(
       enum: ["public", "private"],
       required: true,
     },
+    images:[
+      {
+        type:String,
+      }
+    ],
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
