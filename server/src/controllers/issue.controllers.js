@@ -3,12 +3,12 @@ import cloudinary from '../config/cloudinary.js'
 
 export const createIssue = async (req, res) => {
   try {
-    const { title, description, visibility, images } = req.body;
+    const { title, description, type } = req.body;
 
-    if (!title || !visibility) {
+    if (!title || !type) {
       return res
         .status(400)
-        .json({ message: "Title and visibility is required" });
+        .json({ message: "Title and type is required" });
     }
 
     let uploadedImage;
@@ -32,9 +32,9 @@ export const createIssue = async (req, res) => {
     const issue = await Issue.create({
       title,
       description,
-      visibility,
-      user: req.user.id,
-      images: uploadedImage ? [uploadedImage] : []
+      type,
+      createdBy: req.user.id,
+      images: uploadedImage ? [uploadedImage] : [],
     });
 
     res.status(200).json({
@@ -42,7 +42,7 @@ export const createIssue = async (req, res) => {
         issue
     })
   } catch (error) {
-    res.status(500).json({message:"Server Error"})
+    res.status(500).json({message:"Server Error",error})
   }
 };
 
@@ -50,15 +50,15 @@ export const getIssues = async (req, res) => {
   try {
     let issues;
     if(req.user.role === "admin"){
-        issues = await Issue.find().populate("user", "name email");
+        issues = await Issue.find().populate("createdBy", "name email");
     }else{
         issues = await Issue.find({
-          $or: [{ visibility: "public" }, { user: req.user.id }],
-        }).populate("user", "name email");
+          $or: [{ type: "public" }, { createdBy: req.user.id }],
+        }).populate("createdBy", "name email");
     }
     res.status(200).json(issues)
   } catch (error) {
     console.log(error)
-    res.status(500).json({message:"Server Error"})
+    res.status(500).json({message:"Server Error",error})
   }
 };

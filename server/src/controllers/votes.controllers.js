@@ -1,5 +1,5 @@
 import { isObjectIdOrHexString } from 'mongoose';
-import Issue from '../models/issue.models'
+import Issue from '../models/issue.models.js'
 export const upvotesIssue = async (req, res) => {
     try {
         const issue = await Issue.findById(req.params.id);
