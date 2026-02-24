@@ -6,11 +6,19 @@ import upload from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
-router.post('/createIssue', authMiddleware, upload.single("image"),  createIssue);
-router.get('/getIssues',authMiddleware,getIssues)
+// router.post('/createIssue', authMiddleware, upload.single("image"),  createIssue);
+// router.get('/getIssues',authMiddleware,getIssues)
 
-router.post("/:id/upvotes", authMiddleware, upvotesIssue)
-router.post("/:id/downvotes", authMiddleware, downvotesIssue);
+// router.post("/:id/upvotes", authMiddleware, upvotesIssue)
+// router.post("/:id/downvotes", authMiddleware, downvotesIssue);
+
+
+// only for development and some testing
+router.post('/createIssue', upload.single("image"),  createIssue);
+router.get('/getIssues',getIssues)
+
+router.post("/:id/upvotes", upvotesIssue)
+router.post("/:id/downvotes", downvotesIssue);
 
 
 export default router
