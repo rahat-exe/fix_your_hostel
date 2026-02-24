@@ -1,4 +1,5 @@
-import 'package:client/screens/home.dart';
+// import 'package:client/screens/home.dart';
+import 'package:client/screens/register.dart';
 import 'package:client/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       title: 'Fix hostel',
-      home: Home(),
+      home: Register(),
     );
   }
 }
