@@ -5,7 +5,7 @@ export const createIssue = async (req, res) => {
   try {
     const { title, description, type } = req.body;
 
-    if (!title || !type) {
+    if (!title || !type || !description) {
       return res
         .status(400)
         .json({ message: "Title and type is required" });

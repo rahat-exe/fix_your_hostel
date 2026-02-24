@@ -17,6 +17,7 @@ const router = express.Router();
 router.post('/createIssue', upload.single("image"),  createIssue);
 router.get('/getIssues',getIssues)
 
+
 router.post("/:id/upvotes", upvotesIssue)
 router.post("/:id/downvotes", downvotesIssue);
 

@@ -1,4 +1,5 @@
 import 'package:client/class/issues.dart';
+import 'package:client/services/api.dart';
 import 'package:flutter/material.dart';
 
 class AddIssue extends StatefulWidget {
@@ -11,6 +12,8 @@ class AddIssue extends StatefulWidget {
 
 class _AddIssue extends State<AddIssue> {
   Categories? selectedCategory;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +27,7 @@ class _AddIssue extends State<AddIssue> {
             child: Column(
               children: [
                 TextFormField(
+                  controller: titleController,
                   maxLength: 30,
                   style: TextStyle(),
                   decoration: InputDecoration(
@@ -35,6 +39,7 @@ class _AddIssue extends State<AddIssue> {
 
                 TextFormField(
                   maxLength: 200,
+                  controller: descriptionController,
                   maxLines: null, // 👈 allows unlimited lines
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
@@ -115,7 +120,27 @@ class _AddIssue extends State<AddIssue> {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        final result = await Api.addComplaint({
+                          "title": titleController.text,
+                          "description": descriptionController.text,
+                          "type": "private",
+                        });
+                        if (result != null) {
+                          print(result);
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Submitted')));
+                          Navigator.pop(context);
+                        }
+                      } catch (e) {
+                        print(e);
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                      }
+                    },
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),

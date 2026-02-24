@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+// import 'package:client/services/api.dart';
 
 class ComplaintDetails extends StatefulWidget {
   const ComplaintDetails({
     super.key,
     required this.title,
     required this.description,
-    required this.raisedBy,
+    // required this.raisedBy,
   });
   final String title;
   final String description;
-  final String raisedBy;
+  // final String raisedBy;
   @override
   State<ComplaintDetails> createState() => _ComplaintDetailsState();
 }
@@ -69,6 +70,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 children: [
                   Text(
                     'Raised By : ',
+
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(width: 10),
@@ -78,10 +80,10 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   SizedBox(width: 3),
-                  Text(
-                    widget.raisedBy,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
+                  // Text(
+                  //   widget.raisedBy,
+                  //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  // ),
                 ],
               ),
               SizedBox(height: 20),
