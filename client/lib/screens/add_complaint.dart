@@ -44,7 +44,6 @@ class _AddComplaintState extends State<AddComplaint> {
       "title": titleController.text.trim(),
       "description": descriptionController.text.trim(),
       "type": isPrivate ? "private" : "public",
-      "createdBy": user?['id'] ?? "anonymous",
     });
     if (response != null) {
       if (!mounted) return;
