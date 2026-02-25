@@ -42,7 +42,10 @@ export const createIssue = async (req, res) => {
         issue
     })
   } catch (error) {
-    res.status(500).json({message:"Server Error",error})
+    console.log(error);
+    res.status(500).json({message:"Server Error",
+      error: error.message
+    })
   }
 };
 

@@ -48,6 +48,8 @@ class _Register extends State<Register> {
 
       //if response return then go to home page otherwise error
       if (response.isNotEmpty) {
+        await TokenStorage.save(response["token"]);
+        await UserStorage.saveUser(response["user"]);
         // Login successful, navigate to home screen
         if (!mounted) return;
         Navigator.pushReplacement(
@@ -62,7 +64,6 @@ class _Register extends State<Register> {
           ),
         );
       }
-      print('Logging in with email: ${emailController.text}');
     } else {
       //packed the user data
       final userCredentials = {
@@ -75,7 +76,8 @@ class _Register extends State<Register> {
       };
       //pushed the credentials to register function
       final response = await Auth.register(userCredentials);
-      if (response.containsKey("token")) {
+      print(response);
+      if (response.isNotEmpty) {
         // Registration successful, save token and navigate to home screen
         await TokenStorage.save(response["token"]);
         await UserStorage.saveUser(response["user"]);
@@ -90,7 +92,6 @@ class _Register extends State<Register> {
           SnackBar(content: Text('Registration failed. Please try again.')),
         );
       }
-      print('Registering user: $userCredentials');
     }
   }
 
