@@ -44,8 +44,7 @@ class _AddIssue extends State<AddIssue> {
     final response = await Api.addComplaint({
       "title": titleController.text.trim(),
       "description": descriptionController.text.trim(),
-      "type": "public",
-      "createdBy": user?['id'].toString() ?? "anonymous",
+      "type": "private",
     });
     if (response != null) {
       if (!mounted) return;

@@ -1,5 +1,6 @@
 // import 'package:client/main.dart';
 // import 'package:client/class/issues.dart';
+import 'dart:convert';
 import 'package:client/screens/add_complaint.dart';
 import 'package:client/screens/add_issue.dart';
 import 'package:client/screens/complaint_details.dart';
@@ -18,6 +19,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    fetchComplaints();
+  }
+
   void toAddIssuePage(BuildContext context) {
     Navigator.of(
       context,
@@ -29,10 +36,15 @@ class _HomeState extends State<Home> {
       context,
     ).push(MaterialPageRoute(builder: (ctx) => AddComplaint()));
   }
+
   List<dynamic> _complaints = [];
   void fetchComplaints() async {
+    print('Fetching complaints from API...');
     Api api = Api();
     var data = await api.getComplaints();
+    print('RAW API DATA 👇');
+    print(const JsonEncoder.withIndent('  ').convert(data));
+    print(data[0].keys.toList());
     setState(() {
       _complaints = data;
     });
@@ -42,12 +54,14 @@ class _HomeState extends State<Home> {
     BuildContext context,
     String title,
     String description,
+    String raisedBy,
   ) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => ComplaintDetails(
           title: title,
           description: description,
+          raisedBy: raisedBy,
         ),
       ),
     );
@@ -172,18 +186,21 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 for (final complaints in _complaints)
-                  RaiseCard(
-                    title: complaints.title,
-                    description: complaints.description,
-                    // raiser: complaints.raisedBy,
-                    onTap: () {
-                      toComplaintDetails(
-                        context,
-                        complaints.title,
-                        complaints.description
-                      );
-                    },
-                  ),
+                  if (complaints['type'] == 'public')
+                    RaiseCard(
+                      title: complaints?['title'] ?? 'No Title',
+                      description:
+                          complaints?['description'] ?? 'No Description',
+                      raiser: complaints?['createdBy']['name'],
+                      onTap: () {
+                        toComplaintDetails(
+                          context,
+                          complaints['title'],
+                          complaints['description'],
+                          complaints['createdBy']['name'] ?? 'Anonymous',
+                        );
+                      },
+                    ),
               ],
             ),
           ),
