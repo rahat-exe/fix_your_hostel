@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
   isActive:{
     type:Boolean,
     default:true,
+  },
+  isApproved:{
+    type:String,
+    default:false
   }
 },{
     timestamps:true

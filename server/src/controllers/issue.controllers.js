@@ -117,10 +117,17 @@ export const deleteIssue = async (req, res) =>{
 
     const deletedIssue = await Issue.findByIdAndDelete(id);
 
+    if(!deletedIssue){
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found"
+      })
+    }
+
     return res.status(200).json({
       success:true,
       message:"Issue deleted",
-      data:deleteIssue,
+      data:deletedIssue,
 
     })
 

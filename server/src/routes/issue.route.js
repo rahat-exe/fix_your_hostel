@@ -1,5 +1,5 @@
 import express from 'express'
-import { createIssue, editIssueStatus, getIssues } from '../controllers/issue.controllers.js'
+import { createIssue, deleteIssue, editIssueStatus, getIssues } from '../controllers/issue.controllers.js'
 import authMiddleware from '../middleware/auth.middleware.js'
 import { downvotesIssue, upvotesIssue } from '../controllers/votes.controllers.js';
 import upload from '../middleware/upload.middleware.js';
@@ -14,6 +14,7 @@ router.post("/:id/downvotes", authMiddleware, downvotesIssue);
 
 // for editing the status of the issue--done by admin only
 router.patch("/:id/status", authMiddleware, editIssueStatus);
+router.delete("/:id/issue", authMiddleware, deleteIssue)
 
 
 

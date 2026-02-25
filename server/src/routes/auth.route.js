@@ -71,43 +71,50 @@ router.post("/register", async (req, res)=>{
 // login user(hostellers + admin)
 router.post("/login", async (req, res)=>{
     try {
-        const {email, password} = req.body;
+      const { email, password } = req.body;
 
-        // validation
-        if(!email || !password){
-            return res.status(400).json({
-                message:"Email and Password are required"
-            })
-        }
-        // find user
-        const user = await User.findOne({email});
-        if(!user){
-            return res.status(400).json({
-                message:"Invalid credentials"
-            })
-        }
+      // validation
+      if (!email || !password) {
+        return res.status(400).json({
+          message: "Email and Password are required",
+        });
+      }
+      // find user
+      const user = await User.findOne({ email });
 
-        // compare password
-        const isMatch = await bcrypt.compare(password, user.password)
-        if(!isMatch){
-            return res.status(400).json({
-              message: "Invalid credentials",
-            });
-        }
+      if (!user) {
+        return res.status(400).json({
+          message: "Invalid credentials",
+        });
+      }
 
-        const token = generateToken(user);
+      // compare password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({
+          message: "Invalid credentials",
+        });
+      }
 
-        res.json({
-            message:"Login successfull",
-            token,
-            user:{
-                id:user._id,
-                name:user.name,
-                email:user.email,
-                role:user.role
+      // checked if the user is approved or not
+      if (user.isApproved === false) {
+        return res.status(403).json({
+          message: "You are not approved yet",
+        });
+      }
 
-            }
-        })
+      const token = generateToken(user);
+
+      res.json({
+        message: "Login successfull",
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
     } catch (error) {
         console.error("Login error", error)
         res.status(500).json({message:"Server error"})
