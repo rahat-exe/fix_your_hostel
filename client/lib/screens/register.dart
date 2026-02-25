@@ -1,4 +1,6 @@
+import 'package:client/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:client/services/auth.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -13,6 +15,7 @@ class _Register extends State<Register> {
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passController = TextEditingController();
+
   TextEditingController confirmPassController = TextEditingController();
 
   TextEditingController nameController = TextEditingController();
@@ -32,9 +35,34 @@ class _Register extends State<Register> {
     _form.currentState!.save();
     // Perform login or registration logic here
     if (isLogin) {
-      // Handle login
+      //packed the credentials
+      final credentials = {
+        'email': emailController.text.trim(),
+        'password': passController.text.trim(),
+      };
+
+      //pushed the credentials to login function
+      final response = await Auth.login(credentials);
+
+      //if response return then go to home page otherwise error
+      if (response.isNotEmpty) {
+        // Login successful, navigate to home screen
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login failed. Please check your credentials.'),
+          ),
+        );
+      }
       print('Logging in with email: ${emailController.text}');
     } else {
+      //packed the user data
       final userCredentials = {
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
@@ -43,6 +71,21 @@ class _Register extends State<Register> {
         'hostelBlock': hostelBlockController.text.trim(),
         'roomNo': roomNoController.text.trim(),
       };
+      //pushed the credentials to register function
+      final response = await Auth.register(userCredentials);
+      if (response.isNotEmpty) {
+        // Registration successful, navigate to home screen
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration failed. Please try again.')),
+        );
+      }
       print('Registering user: $userCredentials');
     }
   }
@@ -139,42 +182,49 @@ class _Register extends State<Register> {
                               },
                             ),
                           //roll no
-                          TextFormField(
-                            controller: rollNoController,
-                            decoration: InputDecoration(label: Text('Roll No')),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter a valid roll number';
-                              }
-                              return null;
-                            },
-                          ),
-                          //hostel block
-                          TextFormField(
-                            controller: hostelBlockController,
-                            decoration: InputDecoration(
-                              label: Text('Hostel Block'),
+                          if (!isLogin)
+                            TextFormField(
+                              controller: rollNoController,
+                              decoration: InputDecoration(
+                                label: Text('Roll No'),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Enter a valid roll number';
+                                }
+                                return null;
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter a valid hostel block';
-                              }
-                              return null;
-                            },
-                          ),
+                          //hostel block
+                          if (!isLogin)
+                            TextFormField(
+                              controller: hostelBlockController,
+                              decoration: InputDecoration(
+                                label: Text('Hostel Block'),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Enter a valid hostel block';
+                                }
+                                return null;
+                              },
+                            ),
                           //room no
-                          TextFormField(
-                            controller: roomNoController,
-                            decoration: InputDecoration(label: Text('Room No')),
-                            autocorrect: false,
-                            obscureText: true,
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter a valid room number';
-                              }
-                              return null;
-                            },
-                          ),
+                          if (!isLogin)
+                            TextFormField(
+                              controller: roomNoController,
+                              decoration: InputDecoration(
+                                label: Text('Room No'),
+                              ),
+                              autocorrect: false,
+                              obscureText: true,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Enter a valid room number';
+                                }
+                                return null;
+                              },
+                            ),
                           SizedBox(height: 10),
 
                           ElevatedButton(
