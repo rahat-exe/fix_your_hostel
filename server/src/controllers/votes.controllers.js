@@ -1,8 +1,11 @@
-import { isObjectIdOrHexString } from 'mongoose';
 import Issue from '../models/issue.models.js'
 export const upvotesIssue = async (req, res) => {
     try {
-        const issue = await Issue.findById(req.params.id);
+        // const issue = await Issue.findById(req.params.id);
+        const issue = await Issue.findOne({
+            _id:req.params.id,
+            type:"public"
+        })
         if(!issue){
             return res.status(404).json({message: "Issue not found"})
         }
@@ -13,7 +16,7 @@ export const upvotesIssue = async (req, res) => {
 
         // toggle
         if(issue.upvotes.includes(userId)){
-            issue.upvotes = issue.upvotes.filter((id) => id.toString !== userId)
+            issue.upvotes = issue.upvotes.filter((id) => id.toString() !== userId)
         }else{
             // add
             issue.upvotes.push(userId)
@@ -36,7 +39,11 @@ export const upvotesIssue = async (req, res) => {
 
 export const downvotesIssue = async (req, res) => {
     try {
-        const issue = await Issue.findById(req.params.id)
+        // const issue = await Issue.findById(req.params.id)
+         const issue = await Issue.findOne({
+           _id: req.params.id,
+           type: "public",
+         });
         if(!issue){
             return res.status(404).json({message:"Issue not found"});
         }
