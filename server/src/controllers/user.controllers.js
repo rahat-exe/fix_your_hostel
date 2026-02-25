@@ -1,4 +1,4 @@
-import User from "../models/users.models"
+import User from "../models/users.models.js"
 
 export const approveUser = async (req, res) => {
     try {
