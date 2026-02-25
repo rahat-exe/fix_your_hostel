@@ -1,4 +1,6 @@
 import 'package:client/class/issues.dart';
+import 'package:client/services/api.dart';
+import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 
 class AddIssue extends StatefulWidget {
@@ -10,7 +12,59 @@ class AddIssue extends StatefulWidget {
 }
 
 class _AddIssue extends State<AddIssue> {
+  Map<String, dynamic>? user;
+  @override
+  initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    var userData = await UserStorage.getUser();
+    setState(() {
+      user = userData;
+    });
+    print("user data loged :${userData.toString()}");
+  }
+
+  final _form = GlobalKey<FormState>();
   Categories? selectedCategory;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  void _submit() async {
+    var isValid = _form.currentState?.validate() ?? false;
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields correctly.'),
+        ),
+      );
+      return;
+    }
+    final response = await Api.addComplaint({
+      "title": titleController.text.trim(),
+      "description": descriptionController.text.trim(),
+      "type": "public",
+      "createdBy": user?['id'].toString() ?? "anonymous",
+    });
+    if (response != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Complaint submitted successfully!')),
+      );
+      Navigator.pop(context);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to submit complaint. Please try again.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,9 +75,11 @@ class _AddIssue extends State<AddIssue> {
         child: Padding(
           padding: EdgeInsets.all(12),
           child: Form(
+            key: _form,
             child: Column(
               children: [
                 TextFormField(
+                  controller: titleController,
                   maxLength: 30,
                   style: TextStyle(),
                   decoration: InputDecoration(
@@ -31,10 +87,17 @@ class _AddIssue extends State<AddIssue> {
 
                     hintText: 'Enter the Issue title',
                   ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Title cannot be empty';
+                    }
+                    return null;
+                  },
                 ),
 
                 TextFormField(
                   maxLength: 200,
+                  controller: descriptionController,
                   maxLines: null, // 👈 allows unlimited lines
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
@@ -43,6 +106,12 @@ class _AddIssue extends State<AddIssue> {
                     hintText: 'Describe the issue within 200 words',
                     alignLabelWithHint: true, // 👈 keeps label aligned at top
                   ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Description cannot be empty';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 20),
                 DropdownButtonFormField<Categories>(
@@ -115,7 +184,7 @@ class _AddIssue extends State<AddIssue> {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _submit,
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),

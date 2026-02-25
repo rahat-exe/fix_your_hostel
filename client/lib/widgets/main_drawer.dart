@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:client/util/user_storage.dart';
 
-class MainDrawer extends StatelessWidget {
+class MainDrawer extends StatefulWidget {
   const MainDrawer({super.key});
+
+  @override
+  State<MainDrawer> createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
+  Map<String, dynamic>? user;
+  @override
+  initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    var userData = await UserStorage.getUser();
+    setState(() {
+      user = userData;
+    });
+    print("user data loged :${userData.toString()}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +60,7 @@ class MainDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hi, Riddhi ',
+                      'Hi, ${user?['name'] ?? 'Guest'}',
                       style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onSurface,

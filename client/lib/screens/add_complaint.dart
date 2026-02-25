@@ -1,4 +1,6 @@
+import 'package:client/services/api.dart';
 import 'package:flutter/material.dart';
+import 'package:client/util/user_storage.dart';
 
 class AddComplaint extends StatefulWidget {
   const AddComplaint({super.key});
@@ -8,7 +10,59 @@ class AddComplaint extends StatefulWidget {
 }
 
 class _AddComplaintState extends State<AddComplaint> {
+  Map<String, dynamic>? user;
+  @override
+  initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    var userData = await UserStorage.getUser();
+    setState(() {
+      user = userData;
+    });
+    print("user data loged :${userData.toString()}");
+  }
+
+  final _form = GlobalKey<FormState>();
   bool isPrivate = false;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  void _submit() async {
+    var isValid = _form.currentState?.validate() ?? false;
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields correctly.'),
+        ),
+      );
+      return;
+    }
+    final response = await Api.addComplaint({
+      "title": titleController.text.trim(),
+      "description": descriptionController.text.trim(),
+      "type": isPrivate ? "private" : "public",
+      "createdBy": user?['id'] ?? "anonymous",
+    });
+    if (response != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Complaint submitted successfully!')),
+      );
+      Navigator.pop(context);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to submit complaint. Please try again.'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +78,30 @@ class _AddComplaintState extends State<AddComplaint> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
+          key: _form,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: titleController,
                 maxLength: 30,
                 decoration: const InputDecoration(
                   labelText: 'Complaint Title',
                   hintText: 'Enter a short title',
                   alignLabelWithHint: true,
                 ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Title cannot be empty';
+                  }
+                  return null;
+                },
               ),
 
               const SizedBox(height: 16),
 
               TextFormField(
+                controller: descriptionController,
                 maxLength: 200,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
@@ -48,6 +111,12 @@ class _AddComplaintState extends State<AddComplaint> {
                   hintText: 'Describe the issue in detail',
                   alignLabelWithHint: true,
                 ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Description cannot be empty';
+                  }
+                  return null;
+                },
               ),
 
               const SizedBox(height: 20),
@@ -107,7 +176,7 @@ class _AddComplaintState extends State<AddComplaint> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.black,

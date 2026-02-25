@@ -7,12 +7,12 @@ class RaiseCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.description,
-    required this.raiser,
+    // required this.raiser,
     required this.onTap,
   });
   final String title;
   final String description;
-  final String raiser;
+  // final String raiser;
   final void Function() onTap;
   @override
   Widget build(BuildContext context) {
@@ -57,14 +57,14 @@ class RaiseCard extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            Text(
-              'Raised by : $raiser',
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.66),
-              ),
-            ),
+            // Text(
+            //   'Raised by : $raiser',
+            //   style: Theme.of(context).textTheme.titleSmall!.copyWith(
+            //     color: Theme.of(
+            //       context,
+            //     ).colorScheme.onSurface.withValues(alpha: 0.66),
+            //   ),
+            // ),
           ],
         ),
       ),
