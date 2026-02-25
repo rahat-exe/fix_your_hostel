@@ -6,6 +6,7 @@ class Auth {
   static Future<Map<String, dynamic>> register(
     Map<String, dynamic> userData,
   ) async {
+    print('Registering user with data: $userData');
     var url = Uri.parse('$baseUrl/register');
     try {
       final response = await http.post(
@@ -13,6 +14,8 @@ class Auth {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(userData),
       );
+      print('response code: ${response.statusCode}');
+      print('response body: ${response.body}');
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -29,12 +32,15 @@ class Auth {
     Map<String, dynamic> credentials,
   ) async {
     var url = Uri.parse('$baseUrl/login');
+    print('Logging in with credentials: $credentials');
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(credentials),
       );
+      print('response code: ${response.statusCode}');
+      print('response body: ${response.body}');
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {

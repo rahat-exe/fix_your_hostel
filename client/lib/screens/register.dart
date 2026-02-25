@@ -1,6 +1,8 @@
 import 'package:client/screens/home.dart';
+import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/auth.dart';
+import 'package:client/util/token_storage.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -25,7 +27,7 @@ class _Register extends State<Register> {
   TextEditingController hostelBlockController = TextEditingController();
 
   TextEditingController roomNoController = TextEditingController();
-
+  bool hidePassword = true;
   bool isLogin = true;
   void _submit() async {
     final isValidated = _form.currentState!.validate();
@@ -73,8 +75,10 @@ class _Register extends State<Register> {
       };
       //pushed the credentials to register function
       final response = await Auth.register(userCredentials);
-      if (response.isNotEmpty) {
-        // Registration successful, navigate to home screen
+      if (response.containsKey("token")) {
+        // Registration successful, save token and navigate to home screen
+        await TokenStorage.save(response["token"]);
+        await UserStorage.saveUser(response["user"]);
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
@@ -152,9 +156,21 @@ class _Register extends State<Register> {
                             controller: passController,
                             decoration: InputDecoration(
                               label: Text('Password'),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  hidePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    hidePassword = !hidePassword;
+                                  });
+                                },
+                              ),
                             ),
                             autocorrect: false,
-                            obscureText: true,
+                            obscureText: hidePassword,
                             validator: (value) {
                               if (value == null || value.length < 6) {
                                 return 'Password length must be above 6';
@@ -217,7 +233,6 @@ class _Register extends State<Register> {
                                 label: Text('Room No'),
                               ),
                               autocorrect: false,
-                              obscureText: true,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return 'Enter a valid room number';
