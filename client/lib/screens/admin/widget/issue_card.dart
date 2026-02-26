@@ -17,7 +17,7 @@ class IssueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final margin = 8;
+    final margin = 6;
 
     final cardWidth = screenWidth - (margin * 2);
     return GestureDetector(
@@ -48,13 +48,39 @@ class IssueCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        minRadius: 8,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.error.withValues(alpha: 0.8),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 6),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 22,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.8),
+                ),
+              ],
             ),
             Text(
               description,

@@ -4,15 +4,14 @@ import 'package:client/theme/theme.dart';
 class CardBox extends StatelessWidget {
   const CardBox({super.key, required this.title, required this.count});
   final String title;
-    final int count;
+  final int count;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    const horizontalMargin = 20.0; // left + right padding
+    const horizontalMargin = 12; // left + right padding
     const spacing = 12.0; // SizedBox width between cards
     final cardWidth = (screenWidth - (horizontalMargin * 2) - spacing) / 2;
 
-   
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),

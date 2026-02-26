@@ -1,4 +1,5 @@
 import 'package:client/screens/admin/widget/issue_card.dart';
+import 'package:client/screens/admin/widget/quick_button.dart';
 import 'package:client/util/user_storage.dart';
 
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _AdminHomeState extends State<AdminHome> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.all(20),
+          margin: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
@@ -100,6 +101,24 @@ class _AdminHomeState extends State<AdminHome> {
 
                   physics: NeverScrollableScrollPhysics(),
                 ),
+                SizedBox(height: 10),
+                const Divider(thickness: 1, color: Colors.grey),
+                QuickButton(
+                  title: 'View All Complaints',
+                  icon: Icons.list_sharp,
+                  onTap: () {},
+                ),
+                QuickButton(
+                  title: 'Insights',
+                  icon: Icons.insights_outlined,
+                  onTap: () {},
+                ),
+                QuickButton(
+                  title: 'Send Announcement',
+                  icon: Icons.send_outlined,
+                  onTap: () {},
+                ),
+                const Divider(thickness: 1, color: Colors.grey),
               ],
             ),
           ),
