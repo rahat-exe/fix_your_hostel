@@ -14,8 +14,7 @@ const issueSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["maintenance", "cleanlines", "personal", "others"],
-      default: "others",
+      trim:true,
     },
 
     type: {
