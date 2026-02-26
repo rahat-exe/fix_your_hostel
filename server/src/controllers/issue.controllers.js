@@ -57,7 +57,7 @@ export const getIssues = async (req, res) => {
     }else{
         issues = await Issue.find({
           $or: [{ type: "public" }, { createdBy: req.user.id }],
-        }).populate("createdBy", "name email");
+        }).populate("createdBy", "name email hostelBlock roomNumber");
     }
     res.status(200).json(issues)
   } catch (error) {
