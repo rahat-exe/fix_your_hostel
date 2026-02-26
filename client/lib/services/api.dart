@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client/util/token_storage.dart';
+import 'package:flutter/material.dart';
 
 class Api {
   static const String baseUrl = 'http://localhost:5000/api/issue';
@@ -18,15 +19,16 @@ class Api {
         body: jsonEncode(complaintData),
       );
       print('response code: ${response.statusCode}');
-      print('response body: ${response.body}');
+      debugPrint('$response');
+      debugPrint('response body: ${response.body}');
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        print(response.body);
+        debugPrint(response.body);
         throw Exception('Server error: ${response.body}');
       }
     } catch (e) {
-      print(e);
+      debugPrint('Error in addComplaint: $e');
     }
   }
 
@@ -38,8 +40,9 @@ class Api {
         url,
         headers: {'Authorization': 'Bearer $token'},
       );
-      print('response code: ${response.statusCode}');
-      print('response body: ${response.body}');
+      debugPrint(
+        const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
+      );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
         return data;

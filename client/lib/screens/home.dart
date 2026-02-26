@@ -1,6 +1,5 @@
 // import 'package:client/main.dart';
 // import 'package:client/class/issues.dart';
-import 'dart:convert';
 import 'package:client/screens/add_complaint.dart';
 import 'package:client/screens/add_issue.dart';
 import 'package:client/screens/complaint_details.dart';
@@ -42,9 +41,9 @@ class _HomeState extends State<Home> {
     print('Fetching complaints from API...');
     Api api = Api();
     var data = await api.getComplaints();
-    print('RAW API DATA 👇');
-    print(const JsonEncoder.withIndent('  ').convert(data));
-    print(data[0].keys.toList());
+    // print('RAW API DATA 👇');
+    // print(const JsonEncoder.withIndent('  ').convert(data));
+    // print(data[0].keys.toList());
     setState(() {
       _complaints = data;
     });

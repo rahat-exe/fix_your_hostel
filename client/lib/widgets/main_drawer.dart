@@ -1,3 +1,5 @@
+import 'package:client/screens/account.dart';
+import 'package:client/screens/my_issues.dart';
 import 'package:flutter/material.dart';
 import 'package:client/util/user_storage.dart';
 
@@ -40,7 +42,7 @@ class _MainDrawerState extends State<MainDrawer> {
                   Theme.of(context).colorScheme.primaryContainer,
                   Theme.of(
                     context,
-                  ).colorScheme.primaryContainer.withOpacity(0.85),
+                  ).colorScheme.primaryContainer.withValues(alpha: 0.8),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -83,6 +85,11 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
           ListTile(
+            onTap: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => MyIssues()));
+            },
             leading: Icon(
               Icons.home,
               size: 27,
@@ -97,6 +104,11 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
           ListTile(
+            onTap: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => AccountScreen()));
+            },
             leading: Icon(
               Icons.person,
               size: 27,
