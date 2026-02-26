@@ -16,6 +16,23 @@ class ComplaintDetails extends StatefulWidget {
 }
 
 class _ComplaintDetailsState extends State<ComplaintDetails> {
+  bool isUpvoted = false;
+  bool isDownvoted = false;
+  int upvoteCount = 0;
+  int downvoteCount = 0;
+  bool voteLoading = false;
+  Future<void> handleUpVote() async {
+    setState(() {
+      isUpvoted = true;
+    });
+  }
+
+  Future<void> handleDownVote() async {
+    setState(() {
+      isDownvoted = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,40 +108,82 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: isUpvoted || isDownvoted ? () {} : handleUpVote,
 
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: isUpvoted || isDownvoted
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.6)
+                          : Theme.of(context).colorScheme.primary,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
                       fixedSize: Size(150, 50),
                     ),
-                    child: Text(
-                      'UpVote',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: voteLoading
+                        ? SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : isUpvoted
+                        ? Text(
+                            'UpVoted',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            'UpVote',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                   SizedBox(width: 10),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: isDownvoted || isUpvoted
+                        ? () {}
+                        : handleDownVote,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: isDownvoted || isUpvoted
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.error.withValues(alpha: 0.6)
+                          : Theme.of(context).colorScheme.error,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
                       fixedSize: Size(150, 50),
                     ),
-                    child: Text(
-                      'DownVote',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: voteLoading
+                        ? SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: CircularProgressIndicator(),
+                          )
+                        : isDownvoted
+                        ? Text(
+                            'DownVoted',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            'DownVote',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ],
               ),
