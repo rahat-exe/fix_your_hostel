@@ -1,4 +1,4 @@
-import 'package:client/screens/complaint_details.dart';
+import 'package:client/screens/hosteller/complaint_details.dart';
 import 'package:flutter/material.dart';
 import 'package:client/widgets/raise_card.dart';
 import 'package:client/util/user_storage.dart';

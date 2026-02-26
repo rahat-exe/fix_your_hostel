@@ -1,5 +1,5 @@
-import 'package:client/screens/account.dart';
-import 'package:client/screens/my_issues.dart';
+import 'package:client/screens/hosteller/account.dart';
+import 'package:client/screens/hosteller/my_issues.dart';
 import 'package:flutter/material.dart';
 import 'package:client/util/user_storage.dart';
 

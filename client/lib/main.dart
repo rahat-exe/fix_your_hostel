@@ -15,7 +15,7 @@ final colorScheme = ColorScheme.fromSeed(
 final darktheme = ThemeData().copyWith(
   scaffoldBackgroundColor: AppColors.bgDark,
   primaryColor: AppColors.primary,
-
+  
   colorScheme: ColorScheme.dark(
     surface: AppColors.bgLight,
     primary: AppColors.primary,

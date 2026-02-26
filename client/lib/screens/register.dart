@@ -1,8 +1,9 @@
-import 'package:client/screens/home.dart';
+import 'package:client/screens/hosteller/home.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/auth.dart';
 import 'package:client/util/token_storage.dart';
+import 'package:client/screens/admin/admin_home.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -37,21 +38,24 @@ class _Register extends State<Register> {
     _form.currentState!.save();
     // Perform login or registration logic here
     if (isLogin) {
-      //packed the credentials
       final credentials = {
         'email': emailController.text.trim(),
         'password': passController.text.trim(),
       };
-
-      //pushed the credentials to login function
       final response = await Auth.login(credentials);
 
-      //if response return then go to home page otherwise error
       if (response.isNotEmpty) {
         await TokenStorage.save(response["token"]);
         await UserStorage.saveUser(response["user"]);
-        // Login successful, navigate to home screen
+
         if (!mounted) return;
+        if (response['user']['role'] == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdminHome()),
+          );
+          return;
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Home()),
@@ -65,7 +69,6 @@ class _Register extends State<Register> {
         );
       }
     } else {
-      //packed the user data
       final userCredentials = {
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
@@ -74,18 +77,16 @@ class _Register extends State<Register> {
         'hostelBlock': hostelBlockController.text.trim(),
         'roomNo': roomNoController.text.trim(),
       };
-      //pushed the credentials to register function
+
       final response = await Auth.register(userCredentials);
       print(response);
       if (response.isNotEmpty) {
-        // Registration successful, save token and navigate to home screen
         await TokenStorage.save(response["token"]);
         await UserStorage.saveUser(response["user"]);
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-        );
+        setState(() {
+          isLogin = true;
+        });
+        return;
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

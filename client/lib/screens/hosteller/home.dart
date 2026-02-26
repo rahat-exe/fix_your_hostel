@@ -1,8 +1,8 @@
 // import 'package:client/main.dart';
 // import 'package:client/class/issues.dart';
-import 'package:client/screens/add_complaint.dart';
-import 'package:client/screens/add_issue.dart';
-import 'package:client/screens/complaint_details.dart';
+import 'package:client/screens/hosteller/add_complaint.dart';
+import 'package:client/screens/hosteller/add_issue.dart';
+import 'package:client/screens/hosteller/complaint_details.dart';
 import 'package:client/theme/theme.dart';
 import 'package:client/widgets/issue_button.dart';
 import 'package:client/widgets/main_drawer.dart';
