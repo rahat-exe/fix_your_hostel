@@ -1,5 +1,5 @@
 import 'package:client/screens/admin/tabs.dart';
-import 'package:client/screens/hosteller/home.dart';
+import 'package:client/screens/hosteller/hosteller_tabs.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/auth.dart';
@@ -58,7 +58,7 @@ class _Register extends State<Register> {
         }
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (context) => HostellerTabs()),
         );
       } else {
         if (!mounted) return;

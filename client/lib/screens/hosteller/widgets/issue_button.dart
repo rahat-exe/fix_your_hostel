@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client/theme/theme.dart';
 
 class IssueButton extends StatelessWidget {
   const IssueButton({
@@ -12,17 +13,24 @@ class IssueButton extends StatelessWidget {
   final IconData buttonIcon;
   @override
   Widget build(BuildContext context) {
+     final screenWidth = MediaQuery.of(context).size.width;
+    const horizontalMargin = 12; // left + right padding
+    const spacing = 12.0; // SizedBox width between cards
+    final cardWidth = (screenWidth - (horizontalMargin * 2) - spacing) / 2;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 170,
+        width: cardWidth,
         height: 80,
 
         alignment: Alignment.center,
         margin: EdgeInsets.only(bottom: 12, top: 20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.borderMuted.withValues(alpha: 0.5),
+          ),
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
 
           boxShadow: [
             BoxShadow(
