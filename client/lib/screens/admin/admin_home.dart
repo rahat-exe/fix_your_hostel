@@ -15,10 +15,13 @@ class AdminHome extends StatefulWidget {
 
 class _AdminHomeState extends State<AdminHome> {
   Map<String, dynamic>? admin;
+  bool isAdminLoading = true;
+  bool isComplaintsLoading = true;
   List<dynamic> _complaints = [];
   @override
   void initState() {
     super.initState();
+
     fetchAdmin();
     fetchComplaints();
   }
@@ -27,6 +30,7 @@ class _AdminHomeState extends State<AdminHome> {
     final adminData = await UserStorage.getUser();
     setState(() {
       admin = adminData;
+      isAdminLoading = false;
     });
   }
 
@@ -35,6 +39,7 @@ class _AdminHomeState extends State<AdminHome> {
     var data = await api.getComplaints();
     setState(() {
       _complaints = data;
+      isComplaintsLoading = false;
     });
   }
 
@@ -43,87 +48,95 @@ class _AdminHomeState extends State<AdminHome> {
     const spacing = 12.0; // SizedBox width between cards
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome ${admin?['name']}',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: (isAdminLoading || isComplaintsLoading)
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                SizedBox(height: 20),
-                // Cards Section
-                Row(
-                  children: [
-                    CardBox(title: 'Total Issues', count: 100),
-                    SizedBox(width: spacing),
-                    CardBox(title: 'In progress', count: 20),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    CardBox(title: 'Resolved', count: 40),
-                    SizedBox(width: 10),
-                    CardBox(title: 'Pending', count: 30),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Highest Priority Complaints',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,
-                ),
+                child: SafeArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome ${admin?['name']}',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      // Cards Section
+                      Row(
+                        children: [
+                          CardBox(title: 'Total Issues', count: 100),
+                          SizedBox(width: spacing),
+                          CardBox(title: 'In progress', count: 20),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          CardBox(title: 'Resolved', count: 40),
+                          SizedBox(width: 10),
+                          CardBox(title: 'Pending', count: 30),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Highest Priority Complaints',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
 
-                //Urgent Issues List
-                ListView.builder(
-                  itemBuilder: (context, index) {
-                    var complaint = _complaints[index];
+                      //Urgent Issues List
+                      ListView.builder(
+                        itemBuilder: (context, index) {
+                          var complaint = _complaints[index];
 
-                    return complaint['type'] == "public"
-                        ? IssueCard(
-                            title: complaint?['title'],
-                            description: complaint?['description'],
-                            raiser: complaint?['createdBy']['name'],
-                            onTap: () {},
-                          )
-                        : Container();
-                  },
-                  itemCount: 3,
-                  shrinkWrap: true,
+                          return complaint?['type'] == "public" &&
+                                  complaint?['status'] == "pending"
+                              ? IssueCard(complaint: complaint, onTap: () {})
+                              : Container();
+                        },
+                        itemCount: isComplaintsLoading
+                            ? 0
+                            : (_complaints.length >= 3
+                                  ? 3
+                                  : _complaints.length),
+                        shrinkWrap: true,
 
-                  physics: NeverScrollableScrollPhysics(),
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                      SizedBox(height: 10),
+                      const Divider(thickness: 1, color: Colors.grey),
+                      QuickButton(
+                        title: 'View All Complaints',
+                        icon: Icons.list_sharp,
+                        onTap: () {},
+                      ),
+                      QuickButton(
+                        title: 'Insights',
+                        icon: Icons.insights_outlined,
+                        onTap: () {},
+                      ),
+                      QuickButton(
+                        title: 'Send Announcement',
+                        icon: Icons.send_outlined,
+                        onTap: () {},
+                      ),
+                      const Divider(thickness: 1, color: Colors.grey),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 10),
-                const Divider(thickness: 1, color: Colors.grey),
-                QuickButton(
-                  title: 'View All Complaints',
-                  icon: Icons.list_sharp,
-                  onTap: () {},
-                ),
-                QuickButton(
-                  title: 'Insights',
-                  icon: Icons.insights_outlined,
-                  onTap: () {},
-                ),
-                QuickButton(
-                  title: 'Send Announcement',
-                  icon: Icons.send_outlined,
-                  onTap: () {},
-                ),
-                const Divider(thickness: 1, color: Colors.grey),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
