@@ -1,5 +1,6 @@
 import 'package:client/screens/admin/widget/issue_card.dart';
 import 'package:client/screens/admin/widget/quick_button.dart';
+// import 'package:client/theme/theme.dart';
 import 'package:client/util/user_storage.dart';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,9 @@ class _AdminHomeState extends State<AdminHome> {
   bool isAdminLoading = true;
   bool isComplaintsLoading = true;
   List<dynamic> _complaints = [];
+  // track the selected tab so we can style the bar correctly
+ 
+
   @override
   void initState() {
     super.initState();
@@ -137,6 +141,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
               ),
             ),
+     
     );
   }
 }

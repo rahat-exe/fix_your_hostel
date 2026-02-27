@@ -42,6 +42,7 @@ class IssueCard extends StatelessWidget {
         child: Text(text, style: const TextStyle(fontSize: 12)),
       );
     }
+    
 
     final cardWidth = screenWidth - (margin * 2);
     return GestureDetector(

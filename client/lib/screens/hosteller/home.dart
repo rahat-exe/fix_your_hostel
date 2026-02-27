@@ -186,11 +186,8 @@ class _HomeState extends State<Home> {
                 ),
                 for (final complaints in _complaints)
                   if (complaints['type'] == 'public')
-                    RaiseCard(
-                      title: complaints?['title'] ?? 'No Title',
-                      description:
-                          complaints?['description'] ?? 'No Description',
-                      raiser: complaints?['createdBy']['name'],
+                    RaisedCard(
+                      complaint: complaints,
                       onTap: () {
                         toComplaintDetails(
                           context,

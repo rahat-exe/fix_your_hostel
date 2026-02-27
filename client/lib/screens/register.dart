@@ -1,9 +1,9 @@
+import 'package:client/screens/admin/tabs.dart';
 import 'package:client/screens/hosteller/home.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/auth.dart';
 import 'package:client/util/token_storage.dart';
-import 'package:client/screens/admin/admin_home.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -52,7 +52,7 @@ class _Register extends State<Register> {
         if (response['user']['role'] == 'admin') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AdminHome()),
+            MaterialPageRoute(builder: (context) => Tabs()),
           );
           return;
         }

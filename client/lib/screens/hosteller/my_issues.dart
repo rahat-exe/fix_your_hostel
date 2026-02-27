@@ -1,6 +1,7 @@
 import 'package:client/screens/hosteller/complaint_details.dart';
-import 'package:flutter/material.dart';
 import 'package:client/widgets/raise_card.dart';
+import 'package:flutter/material.dart';
+
 import 'package:client/util/user_storage.dart';
 import 'package:client/services/api.dart';
 
@@ -51,10 +52,8 @@ class _MyIssuesState extends State<MyIssues> {
           children: [
             for (final complaint in _complaints)
               if (complaint['createdBy']['name'] == user?['name'])
-                RaiseCard(
-                  title: complaint?['title'] ?? 'No Title',
-                  description: complaint?['description'] ?? 'No Description',
-                  raiser: complaint?['createdBy']['name'] ?? 'Unknown',
+                RaisedCard(
+                  complaint: complaint,
                   onTap: () {
                     Navigator.push(
                       context,
