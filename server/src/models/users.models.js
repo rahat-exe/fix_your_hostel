@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
   isApproved:{
     type:String,
     default:false
+  },
+  createdAt:{
+    type:Date,
+    default: new Date()
   }
 },{
     timestamps:true

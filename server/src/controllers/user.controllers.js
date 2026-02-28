@@ -40,3 +40,55 @@ export const approveUser = async (req, res) => {
        }) 
     }
 }
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).sort({createdAt:-1});
+
+    if(!users.length){
+      return res.status(404).json({
+        success:false,
+        message:"No user found"
+      })
+    }
+
+    return res.status(200).json({
+      success:true,
+      message:"User fetch successfully",
+      data:users
+    })
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success:false,
+      message:"Server error",
+      error:error.message
+    })
+  }
+}
+
+export const deleteUser = async (req, res)=>{
+  try {
+    const {id} = req.params;
+
+    const deleteUser = await User.findByIdAndDelete(id);
+    if(!deleteUser){
+      return res.status(404).json({
+        success:false,
+        message:"No user found"
+      })
+    }
+
+    res.status(200).json({
+      success:true,
+      message:"User deleted successfully"
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success:false,
+      message:"Server error"
+    })
+  }
+}
