@@ -1,5 +1,5 @@
 import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
-import 'package:client/services/api.dart%20';
+import 'package:client/theme/theme.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 // import 'package:client/services/api.dart';
@@ -13,21 +13,15 @@ class ComplaintDetails extends StatefulWidget {
 
 class _ComplaintDetailsState extends State<ComplaintDetails> {
   Map<String, dynamic>? user;
-  List<dynamic>? _complaints;
+
   bool isAdminLoading = true;
-  bool isComplaintLoading = true;
+  bool isVotesLoading = true;
+
   @override
   void initState() {
     fetchUser();
-    super.initState();
-  }
 
-  void fetchComplaint() async {
-    Api api = Api();
-    final complaintData = await api.getComplaints();
-    setState(() {
-      _complaints = complaintData;
-    });
+    super.initState();
   }
 
   void fetchUser() async {
@@ -42,7 +36,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
   bool isDownvoted = false;
   int upvoteCount = 0;
   int downvoteCount = 0;
-  bool voteLoading = false;
+
   Future<void> handleUpVote() async {
     setState(() {
       isUpvoted = true;
@@ -103,7 +97,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
-      body: isAdminLoading || isComplaintLoading
+      body: isAdminLoading
           ? ProgressIndicatoring()
           : SafeArea(
               child: Container(
@@ -166,7 +160,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         //reported by
                         Text(
@@ -197,14 +191,86 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                     //buttons
                     user?['role'] == "admin"
                         ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Container(child: Text('01')),
+                                  Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                      border: BoxBorder.all(
+                                        color: AppColors.border,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Upvotes :',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          widget.complaint['upvotes'] != null
+                                              ? widget
+                                                    .complaint['upvotes']
+                                                    .length
+                                                    .toString()
+                                              : '0',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   SizedBox(width: 10),
-                                  Container(child: Text('data')),
+                                  Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                      border: BoxBorder.all(
+                                        color: AppColors.border,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'DownVotes :',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          widget.complaint['downvotes'] != null
+                                              ? widget
+                                                    .complaint['downvotes']
+                                                    .length
+                                                    .toString()
+                                              : '0',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -231,17 +297,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                                   ),
                                   minimumSize: Size(150, 50),
                                 ),
-                                child: voteLoading
-                                    ? SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary,
-                                        ),
-                                      )
-                                    : isUpvoted
+                                child: isUpvoted
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -314,13 +370,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                                   ),
                                   minimumSize: Size(150, 50),
                                 ),
-                                child: voteLoading
-                                    ? SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : isDownvoted
+                                child: isDownvoted
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -380,6 +430,26 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 ),
               ),
             ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsetsGeometry.symmetric(vertical: 22, horizontal: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Update'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Delete'),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
