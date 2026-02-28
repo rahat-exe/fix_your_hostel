@@ -52,17 +52,11 @@ class _HomeState extends State<Home> {
 
   void toComplaintDetails(
     BuildContext context,
-    String title,
-    String description,
-    String raisedBy,
+    Map<String, dynamic> complaint,
   ) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ComplaintDetails(
-          title: title,
-          description: description,
-          raisedBy: raisedBy,
-        ),
+        builder: (ctx) => ComplaintDetails(complaint: complaint),
       ),
     );
   }
@@ -200,12 +194,7 @@ class _HomeState extends State<Home> {
                       RaisedCard(
                         complaint: complaints,
                         onTap: () {
-                          toComplaintDetails(
-                            context,
-                            complaints['title'],
-                            complaints['description'],
-                            complaints['createdBy']['name'] ?? 'Anonymous',
-                          );
+                          toComplaintDetails(context, complaints);
                         },
                       ),
               ],

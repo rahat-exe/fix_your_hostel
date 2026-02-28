@@ -69,13 +69,8 @@ class _MyIssuesState extends State<MyIssues> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ComplaintDetails(
-                                  title: complaint['title'],
-                                  description: complaint['description'],
-                                  raisedBy:
-                                      complaint['createdBy']['name'] ??
-                                      'Unknown',
-                                ),
+                                builder: (context) =>
+                                    ComplaintDetails(complaint: complaint),
                               ),
                             );
                           },
