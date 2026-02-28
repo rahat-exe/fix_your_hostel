@@ -16,6 +16,9 @@ router.post("/:id/downvotes", authMiddleware, downvotesIssue);
 router.patch("/:id/status", authMiddleware, editIssueStatus);
 router.delete("/:id/issue", authMiddleware, deleteIssue)
 
+//for adding admin remarks
+router.patch("/:id/remarks",authMiddleware, editRemarks)
+
 
 
 

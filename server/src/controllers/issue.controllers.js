@@ -141,3 +141,31 @@ export const deleteIssue = async (req, res) =>{
     })
   }
 }
+
+export const editRemarks = async (req, res) =>{
+  try {
+    const { adminRemarks } = req.body;
+    const {role} = req.user;
+    const {id} = req.params;
+
+    if(role !== "admin"){
+      return res.status(403).json({success:false, message:"Only admins can add remarks"})
+    }
+    if (!adminRemarks) {
+      return res.status(400).json({
+        success: false,
+        message: "Remarks are required",
+      });
+    }
+
+    const editingRemarks = await Issue.findByIdAndUpdate(id, { adminRemarks :adminRemarks.trim()}, {new:true});
+    if(!editingRemarks){
+       return res.status(404).json({success:false, message:"Issue not found"})
+    }
+
+    res.status(200).json({success:true, message:"Admin remarks added successfully"})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({success:false, message:"Server error",error:error.message})
+  }
+}
