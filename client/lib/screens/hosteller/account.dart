@@ -1,3 +1,4 @@
+import 'package:client/screens/register.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,11 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     super.initState();
     loadUser();
+  }
+
+  void _logout() {
+    UserStorage.clear();
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Register()));
   }
 
   Map<String, dynamic>? user;
@@ -73,6 +79,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 color: Theme.of(context).colorScheme.error,
               ),
               title: Text('Logout'),
+              onTap: _logout,
               trailing: Icon(Icons.arrow_forward_ios_rounded, size: 18),
             ),
             const Divider(),

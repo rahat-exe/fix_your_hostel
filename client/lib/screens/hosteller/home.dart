@@ -1,12 +1,14 @@
 // import 'package:client/main.dart';
 // import 'package:client/class/issues.dart';
-import 'package:client/screens/add_complaint.dart';
-import 'package:client/screens/add_issue.dart';
-import 'package:client/screens/complaint_details.dart';
+import 'package:client/screens/hosteller/add_complaint.dart';
+import 'package:client/screens/hosteller/add_issue.dart';
+import 'package:client/screens/hosteller/complaint_details.dart';
+import 'package:client/screens/hosteller/widgets/empty_list.dart';
+import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:client/theme/theme.dart';
-import 'package:client/widgets/issue_button.dart';
-import 'package:client/widgets/main_drawer.dart';
-import 'package:client/widgets/raise_card.dart';
+import 'package:client/screens/hosteller/widgets/issue_button.dart';
+
+import 'package:client/screens/hosteller/widgets/raise_card.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/api.dart';
 
@@ -18,6 +20,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -41,11 +44,9 @@ class _HomeState extends State<Home> {
     print('Fetching complaints from API...');
     Api api = Api();
     var data = await api.getComplaints();
-    // print('RAW API DATA 👇');
-    // print(const JsonEncoder.withIndent('  ').convert(data));
-    // print(data[0].keys.toList());
     setState(() {
       _complaints = data;
+      isLoading = false;
     });
   }
 
@@ -103,8 +104,6 @@ class _HomeState extends State<Home> {
         ),
         title: const Text(''),
       ),
-      drawer: MainDrawer(),
-
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -158,7 +157,7 @@ class _HomeState extends State<Home> {
                       },
                       buttonIcon: Icons.home,
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: 12),
                     IssueButton(
                       buttonTitle: 'Submit\nHostel Complaint',
                       onTap: () {
@@ -184,22 +183,31 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-                for (final complaints in _complaints)
-                  if (complaints['type'] == 'public')
-                    RaiseCard(
-                      title: complaints?['title'] ?? 'No Title',
-                      description:
-                          complaints?['description'] ?? 'No Description',
-                      raiser: complaints?['createdBy']['name'],
-                      onTap: () {
-                        toComplaintDetails(
-                          context,
-                          complaints['title'],
-                          complaints['description'],
-                          complaints['createdBy']['name'] ?? 'Anonymous',
-                        );
-                      },
-                    ),
+                if (isLoading == true)
+                  Column(
+                    children: [SizedBox(height: 180), ProgressIndicatoring()],
+                  )
+                else if (_complaints.isEmpty)
+                  Column(
+                    children: [
+                      SizedBox(height: 180),
+                      EmptyList(message: 'No Complaints Reported Yet'),
+                    ],
+                  )
+                else
+                  for (final complaints in _complaints)
+                    if (complaints['type'] == 'public')
+                      RaisedCard(
+                        complaint: complaints,
+                        onTap: () {
+                          toComplaintDetails(
+                            context,
+                            complaints['title'],
+                            complaints['description'],
+                            complaints['createdBy']['name'] ?? 'Anonymous',
+                          );
+                        },
+                      ),
               ],
             ),
           ),

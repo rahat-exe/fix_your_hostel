@@ -1,5 +1,6 @@
 // import 'package:client/screens/home.dart';
-import 'package:client/screens/register.dart';
+import 'package:client/screens/auth_wrapper.dart';
+
 import 'package:client/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -69,10 +70,15 @@ class MyApp extends StatelessWidget {
             fontSize: 15,
           ),
         ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.black,
+          unselectedItemColor: Colors.white30,
+          selectedItemColor: Colors.white54,
+        ),
       ),
       themeMode: ThemeMode.system,
       title: 'Fix hostel',
-      home: Register(),
+      home: AuthWrapper(),
     );
   }
 }
