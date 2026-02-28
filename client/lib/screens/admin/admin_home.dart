@@ -1,5 +1,6 @@
 import 'package:client/screens/admin/widget/issue_card.dart';
 import 'package:client/screens/admin/widget/quick_button.dart';
+import 'package:client/screens/hosteller/complaint_details.dart';
 // import 'package:client/theme/theme.dart';
 import 'package:client/util/user_storage.dart';
 
@@ -19,8 +20,25 @@ class _AdminHomeState extends State<AdminHome> {
   bool isAdminLoading = true;
   bool isComplaintsLoading = true;
   List<dynamic> _complaints = [];
+
   // track the selected tab so we can style the bar correctly
- 
+  int getCount(String status) {
+    int count = 0;
+    for (final complaint in _complaints) {
+      if (complaint?['status'] == status) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  void toComplaintDetails(Map<String, dynamic> complaint) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => ComplaintDetails(complaint: complaint),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -76,17 +94,26 @@ class _AdminHomeState extends State<AdminHome> {
                       // Cards Section
                       Row(
                         children: [
-                          CardBox(title: 'Total Issues', count: 100),
+                          CardBox(
+                            title: 'Total Issues',
+                            count: _complaints.length,
+                          ),
                           SizedBox(width: spacing),
-                          CardBox(title: 'In progress', count: 20),
+                          CardBox(
+                            title: 'In progress',
+                            count: getCount('In progress'),
+                          ),
                         ],
                       ),
                       SizedBox(height: 20),
                       Row(
                         children: [
-                          CardBox(title: 'Resolved', count: 40),
+                          CardBox(
+                            title: 'Resolved',
+                            count: getCount('resolved'),
+                          ),
                           SizedBox(width: 10),
-                          CardBox(title: 'Pending', count: 30),
+                          CardBox(title: 'Pending', count: getCount('pending')),
                         ],
                       ),
                       SizedBox(height: 20),
@@ -106,7 +133,12 @@ class _AdminHomeState extends State<AdminHome> {
 
                           return complaint?['type'] == "public" &&
                                   complaint?['status'] == "pending"
-                              ? IssueCard(complaint: complaint, onTap: () {})
+                              ? IssueCard(
+                                  complaint: complaint,
+                                  onTap: () {
+                                    toComplaintDetails(complaint);
+                                  },
+                                )
                               : Container();
                         },
                         itemCount: isComplaintsLoading
@@ -141,7 +173,6 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
               ),
             ),
-     
     );
   }
 }
