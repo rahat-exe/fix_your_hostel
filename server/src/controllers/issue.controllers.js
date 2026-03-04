@@ -103,6 +103,7 @@ export const editIssueStatus = async (req, res) => {
     })
   }
 }
+// to delete issue -- admin only
 export const deleteIssue = async (req, res) =>{
   try {
     const {id} = req.params;
@@ -167,5 +168,75 @@ export const editRemarks = async (req, res) =>{
   } catch (error) {
     console.log(error);
     res.status(500).json({success:false, message:"Server error",error:error.message})
+  }
+}
+
+// to delete issue -- user only that belongs to him
+export const deleteYourIssue = async (req, res) => {
+  try {
+    const {id , role} = req.user;
+    const {id:issueId} = req.params;
+
+    if(role !== "hosteller"){
+      return res.status(403).json({
+        success:false,
+        message:"Access denied"
+      })
+    }
+
+    const issue = await Issue.findOneAndDelete({
+      _id:issueId,
+      createdBy:id
+    })
+    if(!issue){
+      return res.status(404).json({
+        success:false,
+        message:"No issue found"
+      })
+    }
+
+    res.status(200).json({
+      success:true,
+      message:"Issue deleted successfully"
+    })
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success:false,
+      message:"Server error",
+      error:error.message
+    })
+  }
+}
+
+
+// to get all issue -- user only -- that belongs to him
+export const getYourIssue = async (req, res) => {
+  try {
+    const {id:userId} = req.user;
+
+    const issues = await find({
+      createdBy:userId
+    })
+    if(!issues){
+      return res.status(404).json({
+        success:false,
+        message:"No issue found"
+      })
+    }
+
+    res.status(200).json({
+      success:true,
+      message:"Issues found",
+      data:issues
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success:false,
+      message:"Server error",
+      error:error.message
+    })
   }
 }
