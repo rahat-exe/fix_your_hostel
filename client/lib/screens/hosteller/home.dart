@@ -2,7 +2,7 @@
 // import 'package:client/class/issues.dart';
 import 'package:client/screens/hosteller/add_complaint.dart';
 import 'package:client/screens/hosteller/add_issue.dart';
-import 'package:client/screens/hosteller/complaint_details.dart';
+import 'package:client/screens/hosteller/ComplaintDetails/complaint_details.dart';
 import 'package:client/screens/hosteller/widgets/empty_list.dart';
 import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:client/theme/theme.dart';
@@ -48,17 +48,21 @@ class _HomeState extends State<Home> {
       _complaints = data;
       isLoading = false;
     });
+    debugPrint('printing the complaints');
+    debugPrint(_complaints.toString());
   }
 
   void toComplaintDetails(
     BuildContext context,
     Map<String, dynamic> complaint,
-  ) {
-    Navigator.of(context).push(
+  ) async {
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => ComplaintDetails(complaint: complaint),
       ),
     );
+
+    fetchComplaints();
   }
 
   // final List<Issues> _hostelComplaint = [

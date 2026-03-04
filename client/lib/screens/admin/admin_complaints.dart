@@ -1,4 +1,6 @@
 import 'package:client/screens/admin/widget/issue_card.dart';
+import 'package:client/screens/hosteller/ComplaintDetails/complaint_details.dart';
+import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/api.dart';
 
@@ -25,6 +27,14 @@ class _AdminComplaintState extends State<AdminComplaint> {
       _complaints = data;
       isComplaintsLoading = false;
     });
+  }
+
+  void toComplaintDetails(Map<String, dynamic> complaint) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => ComplaintDetails(complaint: complaint),
+      ),
+    );
   }
 
   List<String> selectedBlocks = [];
@@ -223,27 +233,34 @@ class _AdminComplaintState extends State<AdminComplaint> {
 
             /// LIST SECTION
             Expanded(
-              child: SingleChildScrollView(
-                child: isComplaintsLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : _complaints.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No Complaints Reported Yet',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          for (final complaint in _complaints)
-                            IssueCard(complaint: complaint, onTap: () {}),
-                        ],
-                      ),
-              ),
+              child: isComplaintsLoading
+                  ? ProgressIndicatoring()
+                  : SingleChildScrollView(
+                      child: _complaints.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No Complaints Reported Yet',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: [
+                                for (final complaint in _complaints)
+                                  IssueCard(
+                                    complaint: complaint,
+                                    onTap: () {
+                                      toComplaintDetails(complaint);
+                                    },
+                                  ),
+                              ],
+                            ),
+                    ),
             ),
           ],
         ),

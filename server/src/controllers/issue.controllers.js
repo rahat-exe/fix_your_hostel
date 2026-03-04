@@ -1,9 +1,17 @@
+import cloudinary from "../config/cloudinary.js";
 import Issue from "../models/issue.models.js";
-import cloudinary from '../config/cloudinary.js'
+
 
 export const createIssue = async (req, res) => {
   try {
     const { title, description, type } = req.body;
+
+    console.log("the req is", title, description, type);
+
+
+    console.log("Cloudinary in controller:", cloudinary.config());
+
+    console.log("the , req.file", req.file.path);
 
     if (!title || !type || !description) {
       return res
@@ -11,22 +19,18 @@ export const createIssue = async (req, res) => {
         .json({ message: "Title and type is required" });
     }
 
+   
     let uploadedImage;
 
-    if(req.file){
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream({
-          folder:"fix-your-hostel"
-        },
-        (error, result) =>{
-          if(error) reject(error);
-          else resolve(result)
+    if (req.file) {
+      const resOfCloud = await cloudinary.uploader.upload(
+        req.file.path,
+        {
+          resource_type: "image",
         }
-      )
-      stream.end(req.file.buffer)
-      })
-      uploadedImage = uploadResult.secure_url;
+      );
 
+      uploadedImage = resOfCloud.secure_url; 
     }
 
     const issue = await Issue.create({
@@ -36,6 +40,7 @@ export const createIssue = async (req, res) => {
       createdBy: req.user.id,
       images: uploadedImage ? [uploadedImage] : [],
     });
+
 
     res.status(200).json({
         message:"Issue created successfully",

@@ -1,6 +1,8 @@
+import 'package:client/screens/admin/admin_complaints.dart';
+import 'package:client/screens/admin/admin_insights.dart';
 import 'package:client/screens/admin/widget/issue_card.dart';
 import 'package:client/screens/admin/widget/quick_button.dart';
-import 'package:client/screens/hosteller/complaint_details.dart';
+import 'package:client/screens/hosteller/ComplaintDetails/complaint_details.dart';
 // import 'package:client/theme/theme.dart';
 import 'package:client/util/user_storage.dart';
 
@@ -155,12 +157,20 @@ class _AdminHomeState extends State<AdminHome> {
                       QuickButton(
                         title: 'View All Complaints',
                         icon: Icons.list_sharp,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => AdminComplaint(),
+                            ),
+                          );
+                        },
                       ),
                       QuickButton(
                         title: 'Insights',
                         icon: Icons.insights_outlined,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>AdminInsights()));
+                        },
                       ),
                       QuickButton(
                         title: 'Send Announcement',

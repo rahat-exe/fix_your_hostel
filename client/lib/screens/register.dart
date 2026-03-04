@@ -122,6 +122,7 @@ class _Register extends State<Register> {
                           //     },
                           //   ),
                           //name
+                          if(!isLogin)
                           TextFormField(
                             controller: nameController,
                             decoration: InputDecoration(label: Text('Name')),

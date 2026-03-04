@@ -1,4 +1,4 @@
-import 'package:client/screens/hosteller/complaint_details.dart';
+import 'package:client/screens/hosteller/ComplaintDetails/complaint_details.dart';
 import 'package:client/screens/hosteller/widgets/empty_list.dart';
 import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:client/screens/hosteller/widgets/raise_card.dart';
