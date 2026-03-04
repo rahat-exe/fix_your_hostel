@@ -2,6 +2,7 @@
 
 import 'package:client/screens/hosteller/ComplaintDetails/delete_dialog.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/down_vote_button.dart';
+import 'package:client/screens/hosteller/ComplaintDetails/pop_menu.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/up_vote_button.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/vote_count.dart';
 import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
@@ -74,6 +75,37 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
         SnackBar(
           content: Text(
             response['message'] ?? "Error occured",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 15),
+          ),
+          backgroundColor: AppColors.bgLight,
+        ),
+      );
+    }
+  }
+
+  void patchRemarks(String remarks, String id) async {
+    Api api = Api();
+    final response = await api.editRemarks(remarks, id);
+    if (response['success'] == true || response['success'] == "true") {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response['message'] ?? "Remark added",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 15),
+          ),
+          backgroundColor: AppColors.bgLight,
+        ),
+      );
+      setState(() {});
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response['message'] ?? "error occured",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white70, fontSize: 15),
           ),
@@ -185,6 +217,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_element
     Widget _statusBadge(String text) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -251,10 +284,11 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                               children: [
                                 Row(
                                   children: [
-                                    _statusBadge(
-                                      toUpperCamelCase(
+                                    StatusBadgeMenu(
+                                      status: toUpperCamelCase(
                                         widget.complaint['status'],
                                       ),
+                                      onStatusChanged: (value) {},
                                     ),
                                     SizedBox(width: 6),
                                     _priorityBadge(
@@ -390,30 +424,54 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                       user?['role'] == "admin"
                           ? Column(
                               children: [
-                                TextField(
-                                  controller: _remarksController,
-                                  maxLength: 200,
-                                  maxLines: null,
-                                  keyboardType: TextInputType.multiline,
-                                  textInputAction: TextInputAction.newline,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Admin Remarks',
+                                widget.complaint['adminRemarks']
+                                        .toString()
+                                        .isNotEmpty
+                                    ? Container(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          widget.complaint['description'],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          TextField(
+                                            controller: _remarksController,
+                                            maxLength: 200,
+                                            maxLines: null,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            textInputAction:
+                                                TextInputAction.newline,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Admin Remarks',
 
-                                    alignLabelWithHint: true,
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(),
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      child: Text('Post Remarks'),
-                                    ),
-                                  ],
-                                ),
+                                              alignLabelWithHint: true,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  patchRemarks(
+                                                    _remarksController.text,
+                                                    widget.complaint['_id'],
+                                                  );
+                                                },
+                                                child: Text('Post Remarks'),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                               ],
                             )
                           : SizedBox(),
