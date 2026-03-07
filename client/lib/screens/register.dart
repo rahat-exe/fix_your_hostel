@@ -45,23 +45,24 @@ class _Register extends State<Register> {
       };
       final response = await Auth.login(credentials);
       //if got response
+
       if (response.isNotEmpty) {
         //if isApproved and successful
-        if (response['statusCode'] == 200) {
+        if (response['message'] == "Login successfull") {
           await TokenStorage.save(response["token"]);
           await UserStorage.saveUser(response["user"]);
           //if admin
           if (response["user"]["role"] == "admin") {
             if (!mounted) return;
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (ctx) => Tabs()),
             );
             return;
-          }//if hosteller
-           else {
+          } //if hosteller
+          else {
             if (!mounted) return;
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (ctx) => HostellerTabs()),
             );
@@ -69,7 +70,7 @@ class _Register extends State<Register> {
           }
         }
         //if not approved then redirect to wait page
-        if (response['statusCode'] == 403) {
+        if (response['message'] == "You are not approved yet") {
           if (!mounted) return;
           Navigator.push(context, MaterialPageRoute(builder: (ctx) => Wait()));
           return;

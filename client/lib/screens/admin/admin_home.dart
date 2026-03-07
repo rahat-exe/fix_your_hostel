@@ -1,5 +1,6 @@
 import 'package:client/screens/admin/admin_complaints.dart';
 import 'package:client/screens/admin/admin_insights.dart';
+import 'package:client/screens/admin/approval.dart';
 import 'package:client/screens/admin/widget/issue_card.dart';
 import 'package:client/screens/admin/widget/quick_button.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/complaint_details.dart';
@@ -166,16 +167,29 @@ class _AdminHomeState extends State<AdminHome> {
                         },
                       ),
                       QuickButton(
-                        title: 'Insights',
-                        icon: Icons.insights_outlined,
+                        title: 'Approve Request',
+                        icon: Icons.person_add_alt,
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>AdminInsights()));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (ctx) => Approval()),
+                          );
                         },
                       ),
                       QuickButton(
                         title: 'Send Announcement',
                         icon: Icons.send_outlined,
                         onTap: () {},
+                      ),
+                      QuickButton(
+                        title: 'Insights',
+                        icon: Icons.insights_outlined,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => AdminInsights(),
+                            ),
+                          );
+                        },
                       ),
                       const Divider(thickness: 1, color: Colors.grey),
                     ],

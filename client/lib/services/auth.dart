@@ -50,7 +50,7 @@ class Auth {
       );
       print('response code: ${response.statusCode}');
       print('response body: ${response.body}');
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 403) {
         return jsonDecode(response.body);
       } else {
         print(response.body);
