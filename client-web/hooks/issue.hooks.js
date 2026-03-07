@@ -55,3 +55,26 @@ export function useGetIssue(){
         queryKey:["issue"]
     })
 }
+
+export function useGetYourIssue(){
+    return useQuery({
+        queryFn: async () => {
+            const res = await fetch(
+              "http://localhost:5000/api/issue/students/issues",
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  authorization: "Bearer " + localStorage.getItem("token"),
+                },
+              },
+            );
+            if(!res.ok) {
+                throw new Error("Failed to fetch issue")
+            }
+
+            return res.json()
+        },
+        queryKey:["issue"]
+    })
+}

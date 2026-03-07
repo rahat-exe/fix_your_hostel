@@ -1,4 +1,5 @@
 "use client";
+import GetIssues from "@/components/GetIssues";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -18,9 +19,16 @@ const AdminPage = () => {
         router.push("/sign-in");
       }
     }
+    console.log(token);
   }, []);
 
-  return <div>AdminPage</div>;
+  return (
+    <section className="max-w-5xl mx-auto p-4">
+    <h1>Admin Page</h1>
+    <GetIssues role={"admin"} />
+  </section>
+  )
+  
 };
 
 export default AdminPage;

@@ -23,6 +23,7 @@ const IssueCard = ({ data }) => {
     title,
     description,
     priority,
+    type,
     status,
     createdAt,
     createdBy,
@@ -51,15 +52,21 @@ const IssueCard = ({ data }) => {
   };
 
   return (
-    <Card className="max-w-md border-t-4 border-t-primary">
+    <Card className="w-full border-t-4 border-t-primary">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between mb-2">
           <Badge
             variant="outline"
             className={`${priorityStyles[priority]} font-bold`}
           >
-            {priority.toUpperCase()}
+            {priority.toUpperCase()}{" "}
+            <span>
+              <Badge className={`${statusStyles[status]} capitalize`}>
+                {type}
+              </Badge>
+            </span>
           </Badge>
+
           <div className="flex items-center text-xs text-muted-foreground">
             <CalendarIcon className="mr-1 h-3 w-3" />
             {formattedDate}

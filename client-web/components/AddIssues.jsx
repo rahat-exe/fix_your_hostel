@@ -14,7 +14,7 @@ import { Loader2, PlusCircle } from "lucide-react";
 
 const AddIssueForm = ({ handleSubmit, isPending }) => {
   return (
-    <Card className="max-w-2xl mx-auto mt-8">
+    <Card className="w-full mt-8 p-4">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PlusCircle className="w-5 h-5 text-primary" />
@@ -56,9 +56,9 @@ const AddIssueForm = ({ handleSubmit, isPending }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="public">
-                    Public (Visible to all)
+                    Public
                   </SelectItem>
-                  <SelectItem value="private">Private (Only Admin)</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
                 </SelectContent>
               </Select>
             </div>
