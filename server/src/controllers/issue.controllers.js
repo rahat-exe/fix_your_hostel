@@ -4,14 +4,9 @@ import Issue from "../models/issue.models.js";
 
 export const createIssue = async (req, res) => {
   try {
-    const { title, description, type } = req.body;
+    const { title, description, type, category } = req.body;
 
-    console.log("the req is", title, description, type);
-
-
-    console.log("Cloudinary in controller:", cloudinary.config());
-
-    console.log("the , req.file", req.file.path);
+    
 
     if (!title || !type || !description) {
       return res
@@ -22,34 +17,26 @@ export const createIssue = async (req, res) => {
    
     let uploadedImage;
 
-    if (req.file) {
-      const resOfCloud = await cloudinary.uploader.upload(
-        req.file.path,
-        {
-          resource_type: "image",
-        }
-      );
-
-      uploadedImage = resOfCloud.secure_url; 
-    }
-
     const issue = await Issue.create({
       title,
       description,
       type,
       createdBy: req.user.id,
+      category,
       images: uploadedImage ? [uploadedImage] : [],
     });
 
 
     res.status(200).json({
         message:"Issue created successfully",
-        issue
+        data:issue
+        
     })
   } catch (error) {
     console.log(error);
     res.status(500).json({message:"Server Error",
-      error: error.message
+      error: error.message,
+      message:error
     })
   }
 };
@@ -221,7 +208,7 @@ export const getYourIssue = async (req, res) => {
   try {
     const {id:userId} = req.user;
 
-    const issues = await find({
+    const issues = await Issue.find({
       createdBy:userId
     })
     if(!issues){

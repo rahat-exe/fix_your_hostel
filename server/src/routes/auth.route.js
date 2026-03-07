@@ -107,7 +107,7 @@ router.post("/login", async (req, res)=>{
 
       const token = generateToken(user);
 
-      res.json({
+      res.status(200).json({
         message: "Login successfull",
         token,
         user: {
