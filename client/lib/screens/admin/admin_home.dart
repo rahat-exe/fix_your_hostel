@@ -104,7 +104,7 @@ class _AdminHomeState extends State<AdminHome> {
                           SizedBox(width: spacing),
                           CardBox(
                             title: 'In progress',
-                            count: getCount('In progress'),
+                            count: getCount('in progress'),
                           ),
                         ],
                       ),

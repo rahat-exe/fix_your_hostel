@@ -68,7 +68,32 @@ class _ApprovalState extends State<Approval> {
       );
     }
   }
-  
+
+  void deleteUser(String id) async {
+    UserApi api = UserApi();
+    final response = await api.deleteUser(id);
+    if (!mounted) return;
+    if (response.isNotEmpty &&
+        (response['success'] == true || response['success'] == "true")) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return DialogBox(
+            message: "User has been deleted successfully!!",
+            onTap: () {
+              Navigator.pop(context);
+              isUserLoading = true;
+              fetchUsers();
+            },
+          );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error occurred: ${response['message']}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +209,9 @@ class _ApprovalState extends State<Approval> {
                             children: [
                               /// Reject
                               OutlinedButton.icon(
-                                onPressed: () {},
+                                onPressed: () {
+                                  deleteUser(student['_id']);
+                                },
                                 icon: const Icon(
                                   Icons.close,
                                   color: Colors.red,
