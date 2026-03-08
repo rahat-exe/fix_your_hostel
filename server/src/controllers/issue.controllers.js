@@ -225,7 +225,7 @@ export const getYourIssue = async (req, res) => {
 
     const issues = await Issue.find({
       createdBy:userId
-    })
+    }).populate("createdBy", "name email hostelBlock roomNumber")
     if(!issues){
       return res.status(404).json({
         success:false,

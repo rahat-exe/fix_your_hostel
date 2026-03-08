@@ -50,9 +50,11 @@ const StudentsPage = () => {
           >
             Add a Issue
           </Button>
-          <Button className={`h-15 w-3/4 `} variant="outline">
-            <Link href="students/all-issues"> View your issues</Link>
-          </Button>
+          
+            <Button className={`h-15 w-3/4 `} variant="outline" onClick={() => router.push("/students/all-issues")}>
+              View your issues
+            </Button>
+         
         </div>
         <div className="relative">
           <Button

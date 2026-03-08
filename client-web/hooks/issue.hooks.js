@@ -78,3 +78,71 @@ export function useGetYourIssue(){
         queryKey:["issue"]
     })
 }
+
+export function useDeleteIssue(){
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (id) => {
+            const res = await fetch(
+              `http://localhost:5000/api/issue/deleteIssue/${id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  authorization: "Bearer " + localStorage.getItem("token"),
+                },
+              },
+            );
+            if(!res.ok){
+                throw new Error("Failed to delete issue")
+            }
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["issue"] });
+        },
+    })
+}
+
+export function useUpvotes(){
+  return useMutation({
+      mutationFn: async (id) => {
+          const res = await fetch(
+            `http://localhost:5000/api/issue/${id}/upvotes`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            },
+          );
+          if(!res.ok){
+              throw new Error("Failed to upvote issue")
+          }
+          return res.json();
+      },
+  })
+}
+
+export function useDownvotes(){
+  return useMutation({
+      mutationFn: async (id) => {
+          const res = await fetch(
+            `http://localhost:5000/api/issue/${id}/downvotes`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            },
+          );
+          if(!res.ok){
+              throw new Error("Failed to downvote issue")
+          }
+          return res.json();
+      },
+  })
+}
+
