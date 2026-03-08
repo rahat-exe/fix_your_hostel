@@ -43,14 +43,29 @@ export const createIssue = async (req, res) => {
 
 export const getIssues = async (req, res) => {
   try {
-    let issues;
+    // let issues;
+    // if(req.user.role === "admin"){
+    //     issues = await Issue.find().populate("createdBy", "name email");
+    // }else{
+    //     issues = await Issue.find({
+    //       $or: [{ type: "public" }, { createdBy: req.user.id }],
+    //     }).populate("createdBy", "name email hostelBlock roomNumber");
+    // }
+    const {type,priority,status} = req.query;
+    let query = {}
+
+    
+    if(priority) query.priority = priority;
+    if(status) query.status = status;
+
     if(req.user.role === "admin"){
-        issues = await Issue.find().populate("createdBy", "name email");
+     if (type) query.type = type;
     }else{
-        issues = await Issue.find({
-          $or: [{ type: "public" }, { createdBy: req.user.id }],
-        }).populate("createdBy", "name email hostelBlock roomNumber");
+       query.$or = [{ type: "public" }, { createdBy: req.user.id }];
     }
+    const issues = await Issue.find(query).populate("createdBy", "name email hostelBlock roomNumber")
+
+
     res.status(200).json(issues)
   } catch (error) {
     console.log(error)
@@ -210,7 +225,7 @@ export const getYourIssue = async (req, res) => {
 
     const issues = await Issue.find({
       createdBy:userId
-    })
+    }).populate("createdBy", "name email hostelBlock roomNumber")
     if(!issues){
       return res.status(404).json({
         success:false,

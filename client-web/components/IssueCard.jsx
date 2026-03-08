@@ -16,6 +16,8 @@ import {
   ThumbsDown,
   Clock,
 } from "lucide-react";
+import { Button } from "./ui/button";
+import { useDownvotes, useUpvotes } from "@/hooks/issue.hooks";
 
 const IssueCard = ({ data }) => {
   // Destructure for cleaner access
@@ -30,6 +32,7 @@ const IssueCard = ({ data }) => {
     upvotes,
     downvotes,
   } = data;
+
 
   const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
     month: "short",
@@ -51,6 +54,15 @@ const IssueCard = ({ data }) => {
     resolved: "bg-green-100 text-green-600",
   };
 
+  const {mutate,isPending, data:upvote} = useUpvotes();
+  const handleUpvote = () => {
+    mutate(data._id)
+  }
+
+  const { mutate: downMutate, isPending:downPending, data:downvote } = useDownvotes();
+  const handleDownvote = () => {
+    downMutate(data._id);
+  };
   return (
     <Card className="w-full border-t-4 border-t-primary">
       <CardHeader className="pb-3">
@@ -98,12 +110,16 @@ const IssueCard = ({ data }) => {
       <CardFooter className="flex justify-between items-center bg-slate-50/50 py-3">
         <div className="flex space-x-3">
           <div className="flex items-center text-sm text-slate-500">
-            <ThumbsUp className="mr-1 h-4 w-4" />
-            {upvotes.length}
+            <Button variant="ghost" onClick={handleUpvote}>
+              <ThumbsUp className="mr-1 h-4 w-4" />
+              {upvote ? upvote.upvotes : upvotes.length}
+            </Button>
           </div>
           <div className="flex items-center text-sm text-slate-500">
-            <ThumbsDown className="mr-1 h-4 w-4" />
-            {downvotes.length}
+            <Button variant="ghost" onClick={handleDownvote}>
+              <ThumbsDown className="mr-1 h-4 w-4" />
+              {downvote ? downvote.downvotes : downvotes.length}
+            </Button>
           </div>
         </div>
 
