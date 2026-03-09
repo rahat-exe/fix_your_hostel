@@ -294,6 +294,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
     }
 
     return PopScope(
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.pop(context, hasUpdated);

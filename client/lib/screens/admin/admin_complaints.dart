@@ -35,10 +35,9 @@ class _AdminComplaintState extends State<AdminComplaint> {
         builder: (ctx) => ComplaintDetails(complaint: complaint),
       ),
     );
+    print(response);
     if (response == true) {
-      setState(() {
-        fetchComplaints();
-      });
+      fetchComplaints();
     }
   }
 
