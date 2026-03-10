@@ -2,7 +2,8 @@ import express from 'express'
 import { createIssue, deleteIssue, deleteYourIssue, editIssueStatus, editRemarks, getIssues, getYourIssue } from '../controllers/issue.controllers.js'
 import authMiddleware from '../middleware/auth.middleware.js'
 import { downvotesIssue, upvotesIssue } from '../controllers/votes.controllers.js';
-import upload from '../middleware/upload.middleware.js';
+import { upload } from '../config/cloudinary.js';
+
 
 const router = express.Router();
 

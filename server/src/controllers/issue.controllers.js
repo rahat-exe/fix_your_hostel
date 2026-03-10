@@ -1,5 +1,6 @@
-import cloudinary from "../config/cloudinary.js";
+
 import Issue from "../models/issue.models.js";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 
 
 export const createIssue = async (req, res) => {
@@ -14,8 +15,15 @@ export const createIssue = async (req, res) => {
         .json({ message: "Title and type is required" });
     }
 
+    let result
+    if(req.file){
+      console.log(req.file);
+      result = await uploadToCloudinary(req.file.buffer);
+      console.log(result);
+    }
+    
    
-    let uploadedImage;
+    const uploadedImage = result.secure_url;
 
     const issue = await Issue.create({
       title,
