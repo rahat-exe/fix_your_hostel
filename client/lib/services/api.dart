@@ -32,28 +32,46 @@ class Api {
     }
   }
 
-  Future<List<dynamic>> getComplaints() async {
-    final token = await TokenStorage.get();
-    var url = Uri.parse('$baseUrl/getIssues');
-    try {
-      final response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $token'},
-      );
-      debugPrint(
-        const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body.toString());
-        return data;
-      } else {
-        throw Exception('Failed to fetch complaints');
-      }
-    } catch (e) {
-      print(e);
-      return [];
+  Future<List<dynamic>> getComplaints({
+  String? type,
+  String? priority,
+  String? status,
+}) async {
+  final token = await TokenStorage.get();
+
+  // Build query parameters
+  Map<String, String> queryParams = {};
+
+  if (type != null) queryParams["type"] = type;
+  if (priority != null) queryParams["priority"] = priority;
+  if (status != null) queryParams["status"] = status;
+
+  // Create URL with query
+  var url = Uri.parse('$baseUrl/getIssues').replace(queryParameters: queryParams);
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    debugPrint(
+      const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to fetch complaints');
     }
+  } catch (e) {
+    print(e);
+    return [];
   }
+}
 
   Future<Map<String, dynamic>> deleteComplaint(String id) async {
     final token = await TokenStorage.get();

@@ -22,7 +22,10 @@ class _AdminComplaintState extends State<AdminComplaint> {
 
   void fetchComplaints() async {
     Api api = Api();
-    var data = await api.getComplaints();
+    var data = await api.getComplaints(
+      type: selectedVisibility == "all" ? null : selectedVisibility,
+      status: selectedStatus == "all" ? null : selectedStatus,
+    );
     setState(() {
       _complaints = data;
       isComplaintsLoading = false;
@@ -44,7 +47,7 @@ class _AdminComplaintState extends State<AdminComplaint> {
   List<String> selectedBlocks = [];
   String selectedVisibility = "all";
   String selectedSort = "recent";
-
+  String selectedStatus = "all";
   final List<String> blocks = ["Block A", "Block B", "Block C", "Block D"];
 
   void _openFilterSheet() {
@@ -56,123 +59,191 @@ class _AdminComplaintState extends State<AdminComplaint> {
           builder: (context, setModalState) {
             return Padding(
               padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Filter & Sort",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Filter & Sort",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              const Text(
+                                "Filter by Hostel Block",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 10,
+                                children: blocks.map((block) {
+                                  return FilterChip(
+                                    label: Text(
+                                      block,
+                                      selectionColor: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                                    selected: selectedBlocks.contains(block),
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).scaffoldBackgroundColor,
+                                    selectedColor: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface, // 🔥 selected color
+                                    checkmarkColor: Theme.of(
+                                      context,
+                                    ).scaffoldBackgroundColor,
+                                    side: BorderSide(
+                                      color: selectedBlocks.contains(block)
+                                          ? Colors.white
+                                          : Colors.grey,
+                                    ),
+                                    onSelected: (value) {
+                                      setModalState(() {
+                                        if (value) {
+                                          selectedBlocks.add(block);
+                                        } else {
+                                          selectedBlocks.remove(block);
+                                        }
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                "Visibility",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                ),
+                              ),
+
+                              Column(
+                                spacing: 10,
+                                children: [
+                                  RadioGroup<String>(
+                                    groupValue: selectedVisibility,
+                                    onChanged: (value) {
+                                      setModalState(() {
+                                        selectedVisibility = value!;
+                                      });
+                                    },
+                                    child: Column(
+                                      spacing: 0,
+                                      children: const [
+                                        RadioListTile(
+                                          value: "all",
+                                          title: Text("All"),
+                                        ),
+                                        RadioListTile(
+                                          value: "public",
+                                          title: Text("Public"),
+                                        ),
+                                        RadioListTile(
+                                          value: "private",
+                                          title: Text("Private"),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                "Status",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                ),
+                              ),
+
+                              Column(
+                                children: [
+                                  RadioGroup<String>(
+                                    groupValue: selectedStatus,
+                                    onChanged: (value) {
+                                      setModalState(() {
+                                        selectedStatus = value!;
+                                      });
+                                    },
+                                    child: Column(
+                                      children: const [
+                                        RadioListTile(
+                                          value: "all",
+                                          title: Text("All"),
+                                        ),
+                                        RadioListTile(
+                                          value: "pending",
+                                          title: Text("Pending"),
+                                        ),
+                                        RadioListTile(
+                                          value: "in progress",
+                                          title: Text("In Progress"),
+                                        ),
+                                        RadioListTile(
+                                          value: "resolved",
+                                          title: Text("Resolved"),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              const Text(
+                                "Sort By",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                ),
+                              ),
+
+                              Column(
+                                children: [
+                                  _sortTile(
+                                    "recent",
+                                    "Most Recent",
+                                    setModalState,
+                                  ),
+                                  _sortTile(
+                                    "priority",
+                                    "Priority",
+                                    setModalState,
+                                  ),
+                                  _sortTile(
+                                    "votes",
+                                    "Highest Votes",
+                                    setModalState,
+                                  ),
+                                  _sortTile(
+                                    "oldest",
+                                    "Oldest First",
+                                    setModalState,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      "Filter by Hostel Block",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-
-                    Wrap(
-                      spacing: 8,
-                      children: blocks.map((block) {
-                        return FilterChip(
-                          label: Text(
-                            block,
-                            selectionColor: Theme.of(
-                              context,
-                            ).colorScheme.onSurface,
-                          ),
-                          selected: selectedBlocks.contains(block),
-                          backgroundColor: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor,
-                          selectedColor: Theme.of(
-                            context,
-                          ).colorScheme.onSurface, // 🔥 selected color
-                          checkmarkColor: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor,
-                          side: BorderSide(
-                            color: selectedBlocks.contains(block)
-                                ? Colors.white
-                                : Colors.grey,
-                          ),
-                          onSelected: (value) {
-                            setModalState(() {
-                              if (value) {
-                                selectedBlocks.add(block);
-                              } else {
-                                selectedBlocks.remove(block);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      "Visibility",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-
-                    Column(
-                      children: [
-                        RadioListTile(
-                          value: "all",
-                          groupValue: selectedVisibility,
-                          title: const Text("All"),
-                          onChanged: (value) {
-                            setModalState(() {
-                              selectedVisibility = value!;
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          value: "public",
-                          groupValue: selectedVisibility,
-                          title: const Text("Public"),
-                          onChanged: (value) {
-                            setModalState(() {
-                              selectedVisibility = value!;
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          value: "private",
-                          groupValue: selectedVisibility,
-                          title: const Text("Private"),
-                          onChanged: (value) {
-                            setModalState(() {
-                              selectedVisibility = value!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      "Sort By",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-
-                    Column(
-                      children: [
-                        _sortTile("recent", "Most Recent", setModalState),
-                        _sortTile("status", "Status", setModalState),
-                        _sortTile("priority", "Priority", setModalState),
-                        _sortTile("votes", "Highest Votes", setModalState),
-                        _sortTile("oldest", "Oldest First", setModalState),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -182,8 +253,8 @@ class _AdminComplaintState extends State<AdminComplaint> {
                           ).scaffoldBackgroundColor,
                         ),
                         onPressed: () {
-                          setState(() {});
                           Navigator.pop(context);
+                          fetchComplaints();
                         },
                         child: const Text("Apply"),
                       ),
@@ -239,31 +310,30 @@ class _AdminComplaintState extends State<AdminComplaint> {
             Expanded(
               child: isComplaintsLoading
                   ? ProgressIndicatoring()
+                  : _complaints.isEmpty
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'No Complaints Found',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
                   : SingleChildScrollView(
-                      child: _complaints.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No Complaints Reported Yet',
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          : Column(
-                              children: [
-                                for (final complaint in _complaints)
-                                  IssueCard(
-                                    complaint: complaint,
-                                    onTap: () {
-                                      toComplaintDetails(complaint);
-                                    },
-                                  ),
-                              ],
+                      child: Column(
+                        children: [
+                          for (final complaint in _complaints)
+                            IssueCard(
+                              complaint: complaint,
+                              onTap: () {
+                                toComplaintDetails(complaint);
+                              },
                             ),
+                        ],
+                      ),
                     ),
             ),
           ],
