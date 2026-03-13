@@ -15,6 +15,7 @@ class AddIssue extends StatefulWidget {
 }
 
 class _AddIssue extends State<AddIssue> {
+  bool isLoading = false;
   Map<String, dynamic>? user;
   File? selectedImage;
   @override
@@ -45,12 +46,19 @@ class _AddIssue extends State<AddIssue> {
       );
       return;
     }
+    setState(() {
+      isLoading = true;
+    });
+
     final response = await Api.addComplaint({
       "title": titleController.text.trim(),
       "description": descriptionController.text.trim(),
       "type": "private",
       "image": selectedImage,
-      "category": selectedCategory.toString(),
+      "category": selectedCategory?.name,
+    });
+    setState(() {
+      isLoading = false;
     });
     if (response != null) {
       print(response);
@@ -71,189 +79,220 @@ class _AddIssue extends State<AddIssue> {
     }
   }
 
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          content: Row(
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Loading..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('List your issues', style: TextStyle(fontSize: 20)),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Form(
-            key: _form,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: titleController,
-                  maxLength: 30,
-                  style: TextStyle(),
-                  decoration: InputDecoration(
-                    label: Text('Issue title'),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: Form(
+                key: _form,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: titleController,
+                      maxLength: 30,
+                      style: TextStyle(),
+                      decoration: InputDecoration(
+                        label: Text('Issue title'),
 
-                    hintText: 'Enter the Issue title',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Title cannot be empty';
-                    }
-                    return null;
-                  },
-                ),
-
-                TextFormField(
-                  maxLength: 200,
-                  controller: descriptionController,
-                  maxLines: null, // 👈 allows unlimited lines
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    label: Text('Description'),
-                    hintText: 'Describe the issue within 200 words',
-                    alignLabelWithHint: true, // 👈 keeps label aligned at top
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Description cannot be empty';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                DropdownButtonFormField<Categories>(
-                  initialValue: selectedCategory,
-                  dropdownColor: Theme.of(context).colorScheme.surface,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-
-                  decoration: InputDecoration(
-                    labelText: 'Category',
-
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white24),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 1.5,
+                        hintText: 'Enter the Issue title',
                       ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Title cannot be empty';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  items: Categories.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.name.toLowerCase()),
+
+                    TextFormField(
+                      maxLength: 200,
+                      controller: descriptionController,
+                      maxLines: null, // 👈 allows unlimited lines
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.newline,
+                      decoration: InputDecoration(
+                        label: Text('Description'),
+                        hintText: 'Describe the issue within 200 words',
+                        alignLabelWithHint:
+                            true, // 👈 keeps label aligned at top
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Description cannot be empty';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    DropdownButtonFormField<Categories>(
+                      initialValue: selectedCategory,
+                      dropdownColor: Theme.of(context).colorScheme.surface,
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+
+                      decoration: InputDecoration(
+                        labelText: 'Category',
+
+                        filled: true,
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == null) {
-                        return;
-                      }
-                      selectedCategory = value;
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                if (selectedImage != null) ...[
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 1,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.4),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.white24),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      items: Categories.values
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e.name.toLowerCase()),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == null) {
+                            return;
+                          }
+                          selectedCategory = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    if (selectedImage != null) ...[
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        height: 350,
+                        width: 200,
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Image.file(
+                            selectedImage!,
+                            filterQuality: FilterQuality.high,
+
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+
+                    SizedBox(
+                      height: 50,
+                      width: double.infinity,
+                      child: ImageInput(
+                        onSelectImage: (value) {
+                          setState(() {
+                            selectedImage = value;
+                          });
+                        },
                       ),
                     ),
-                    height: 350,
-                    width: 200,
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Image.file(
-                        selectedImage!,
-                        filterQuality: FilterQuality.high,
 
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
+                    SizedBox(height: 20),
+                    SizedBox(
+                      height: 50,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submit,
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          fixedSize: Size(120, 50),
+                        ),
+
+                        child: Text(
+                          'Submit Issue',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer
+                                .withValues(alpha: 0.8),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
+                    SizedBox(width: 30),
+                    const SizedBox(height: 12),
 
-                SizedBox(
-                  height: 50,
-                  width: double.infinity,
-                  child: ImageInput(
-                    onSelectImage: (value) {
-                      setState(() {
-                        selectedImage = value;
-                      });
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 20),
-                SizedBox(
-                  height: 50,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      fixedSize: Size(120, 50),
-                    ),
-
-                    child: Text(
-                      'Submit Issue',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                    // 🔹 Cancel (Tertiary)
+                    Center(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.white54),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(width: 30),
-                const SizedBox(height: 12),
-
-                // 🔹 Cancel (Tertiary)
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.white54),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
       ),
     );
   }

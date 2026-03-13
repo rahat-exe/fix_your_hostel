@@ -98,16 +98,21 @@ class RaisedCard extends StatelessWidget {
                           Row(
                             children: [
                               SizedBox(width: 4),
-                              Text(
-                                complaint?['title'] ?? 'No Title',
-                                style: Theme.of(context).textTheme.titleLarge!
-                                    .copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Text(
+                                  complaint?['title'] ?? 'No Title',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: Theme.of(context).textTheme.titleLarge!
+                                      .copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
                               ),
                             ],
                           ),

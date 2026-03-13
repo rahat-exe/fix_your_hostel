@@ -20,11 +20,11 @@ class Api {
         "category": complaintData["category"],
         if (complaintData["image"] != null)
           "image": await MultipartFile.fromFile(
-    complaintData["image"].path,
-    filename: "issue.jpg",
-  ),
+            complaintData["image"].path,
+            filename: "issue.jpg",
+          ),
       });
-
+      print(formData);
       final response = await dio.post(
         "$baseUrl/createIssue",
         data: formData,
