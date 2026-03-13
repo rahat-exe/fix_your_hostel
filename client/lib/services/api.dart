@@ -2,76 +2,85 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client/util/token_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class Api {
   static const String baseUrl = 'http://localhost:5000/api/issue';
 
-  static addComplaint(Map<String, dynamic> complaintData) async {
-    var url = Uri.parse('$baseUrl/createIssue');
+  static Future addComplaint(Map<String, dynamic> complaintData) async {
     try {
       final token = await TokenStorage.get();
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(complaintData),
+
+      Dio dio = Dio();
+
+      FormData formData = FormData.fromMap({
+        "title": complaintData["title"],
+        "description": complaintData["description"],
+        "type": complaintData["type"],
+        "category": complaintData["category"],
+        if (complaintData["image"] != null)
+          "image": await MultipartFile.fromFile(
+    complaintData["image"].path,
+    filename: "issue.jpg",
+  ),
+      });
+
+      final response = await dio.post(
+        "$baseUrl/createIssue",
+        data: formData,
+        options: Options(headers: {"Authorization": "Bearer $token"}),
       );
-      print('response code: ${response.statusCode}');
-      debugPrint('$response');
-      debugPrint('response body: ${response.body}');
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        debugPrint(response.body);
-        throw Exception('Server error: ${response.body}');
-      }
+      debugPrint('sending dio');
+      print(response);
+      debugPrint('${response.statusCode}');
+
+      return response.data;
     } catch (e) {
-      debugPrint('Error in addComplaint: $e');
+      print("Error in addComplaint: $e");
+      return null;
     }
   }
 
   Future<List<dynamic>> getComplaints({
-  String? type,
-  String? priority,
-  String? status,
-}) async {
-  final token = await TokenStorage.get();
+    String? type,
+    String? priority,
+    String? status,
+  }) async {
+    final token = await TokenStorage.get();
 
-  // Build query parameters
-  Map<String, String> queryParams = {};
+    // Build query parameters
+    Map<String, String> queryParams = {};
 
-  if (type != null) queryParams["type"] = type;
-  if (priority != null) queryParams["priority"] = priority;
-  if (status != null) queryParams["status"] = status;
+    if (type != null) queryParams["type"] = type;
+    if (priority != null) queryParams["priority"] = priority;
+    if (status != null) queryParams["status"] = status;
 
-  // Create URL with query
-  var url = Uri.parse('$baseUrl/getIssues').replace(queryParameters: queryParams);
+    // Create URL with query
+    var url = Uri.parse(
+      '$baseUrl/getIssues',
+    ).replace(queryParameters: queryParams);
 
-  try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
-    debugPrint(
-      const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
-    );
+      debugPrint(
+        const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
+      );
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      return data;
-    } else {
-      throw Exception('Failed to fetch complaints');
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to fetch complaints');
+      }
+    } catch (e) {
+      print(e);
+      return [];
     }
-  } catch (e) {
-    print(e);
-    return [];
   }
-}
 
   Future<Map<String, dynamic>> deleteComplaint(String id) async {
     final token = await TokenStorage.get();

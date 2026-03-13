@@ -1,10 +1,13 @@
 import 'package:client/class/issues.dart';
+import 'package:client/screens/hosteller/widgets/image_input.dart';
 import 'package:client/services/api.dart';
 import 'package:client/util/user_storage.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class AddIssue extends StatefulWidget {
   const AddIssue({super.key});
+
   @override
   State<AddIssue> createState() {
     return _AddIssue();
@@ -13,6 +16,7 @@ class AddIssue extends StatefulWidget {
 
 class _AddIssue extends State<AddIssue> {
   Map<String, dynamic>? user;
+  File? selectedImage;
   @override
   initState() {
     super.initState();
@@ -45,9 +49,11 @@ class _AddIssue extends State<AddIssue> {
       "title": titleController.text.trim(),
       "description": descriptionController.text.trim(),
       "type": "private",
+      "image": selectedImage,
       "category": selectedCategory.toString(),
     });
     if (response != null) {
+      print(response);
       if (!mounted) return;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,22 +169,46 @@ class _AddIssue extends State<AddIssue> {
                   },
                 ),
                 SizedBox(height: 20),
-                SizedBox(
-                  height: 50,
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.image_outlined),
-                    label: const Text('Add Images'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white70,
-                      side: BorderSide(color: Colors.white24),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                if (selectedImage != null) ...[
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    height: 350,
+                    width: 200,
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Image.file(
+                        selectedImage!,
+                        filterQuality: FilterQuality.high,
+
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
                       ),
                     ),
                   ),
+                  SizedBox(height: 20),
+                ],
+
+                SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: ImageInput(
+                    onSelectImage: (value) {
+                      setState(() {
+                        selectedImage = value;
+                      });
+                    },
+                  ),
                 ),
+
                 SizedBox(height: 20),
                 SizedBox(
                   height: 50,
