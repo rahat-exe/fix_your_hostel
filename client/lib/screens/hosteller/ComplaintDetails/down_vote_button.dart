@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 class DownVoteButton extends StatelessWidget {
   const DownVoteButton({
     super.key,
-    required this.isUpvoted,
+
     required this.isDownVoted,
     required this.onTap,
   });
-  final bool isUpvoted;
+
   final bool isDownVoted;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: isDownVoted || isUpvoted ? () {} : onTap,
+      onPressed: isDownVoted ? () {} : onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: isDownVoted || isUpvoted
+        backgroundColor: isDownVoted
             ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.5)
             : Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.surface,
@@ -54,7 +54,7 @@ class DownVoteButton extends StatelessWidget {
                   'DownVote',
                   style: TextStyle(
                     fontSize: 18,
-                    color: isUpvoted || isDownVoted
+                    color: isDownVoted
                         ? Theme.of(
                             context,
                           ).colorScheme.onSurface.withValues(alpha: 0.5)

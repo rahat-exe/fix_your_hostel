@@ -23,12 +23,16 @@ class ComplaintDetails extends StatefulWidget {
 
 class _ComplaintDetailsState extends State<ComplaintDetails> {
   Map<String, dynamic>? user;
+  bool isLoading = false;
   bool isAdminLoading = true;
   bool isCheckVotesLoading = true;
+
   bool isUpvoted = false;
   bool isDownvoted = false;
+
   bool hasUpdated = false;
   int upvoteCount = 0;
+
   int downvoteCount = 0;
   Map<String, dynamic>? votes;
   late TextEditingController _remarksController;
@@ -181,13 +185,22 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
 
   Future<void> handleUpVote() async {
     Votes vote = Votes(complaintId: widget.complaint['_id']);
+    setState(() {
+      isLoading = true;
+    });
     final response = await vote.upVote();
+    setState(() {
+      isLoading = false;
+    });
     if (!mounted) return;
     if (response['message'] == "Vote updated") {
       setState(() {
         votes = response;
         isUpvoted = true;
+        isDownvoted = false;
+        hasUpdated = true;
       });
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -198,10 +211,8 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           backgroundColor: AppColors.bgLight,
         ),
       );
-      setState(() {
-        hasUpdated = true;
-      });
     } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -219,13 +230,23 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
 
   Future<void> handleDownVote() async {
     Votes vote = Votes(complaintId: widget.complaint['_id']);
+    setState(() {
+      isLoading = true;
+    });
     final response = await vote.downVote();
+    setState(() {
+      isLoading = false;
+    });
     if (!mounted) return;
     if (response['message'] == "Vote updated") {
       setState(() {
         votes = response;
         isDownvoted = true;
+        isUpvoted = false;
+        hasUpdated = true;
       });
+
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -236,10 +257,8 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           backgroundColor: AppColors.bgLight,
         ),
       );
-      setState(() {
-        hasUpdated = true;
-      });
     } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -311,277 +330,278 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
             style: TextStyle(fontWeight: FontWeight.w500),
           ),
         ),
-        body: (isAdminLoading || isCheckVotesLoading)
-            ? ProgressIndicatoring()
-            : SingleChildScrollView(
-                child: SafeArea(
-                  child: Container(
-                    padding: EdgeInsets.all(15),
-                    alignment: Alignment.topLeft,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //descriptions
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            widget.complaint['description'],
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium!.copyWith(fontSize: 18),
-                          ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: SafeArea(
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //descriptions
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          widget.complaint['description'],
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium!.copyWith(fontSize: 18),
                         ),
-                        SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      if (user?['role'] == "admin")
-                                        StatusBadgeMenu(
-                                          status: toUpperCamelCase(
-                                            widget.complaint['status'],
-                                          ),
-                                          onStatusChanged: (value) {
-                                            _changeStatus(value);
-                                          },
-                                        )
-                                      else
-                                        _statusBadge(
-                                          toUpperCamelCase(
-                                            widget.complaint['status'],
-                                          ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    if (user?['role'] == "admin")
+                                      StatusBadgeMenu(
+                                        status: toUpperCamelCase(
+                                          widget.complaint['status'],
                                         ),
-                                      SizedBox(width: 6),
-                                      _priorityBadge(
+                                        onStatusChanged: (value) {
+                                          _changeStatus(value);
+                                        },
+                                      )
+                                    else
+                                      _statusBadge(
                                         toUpperCamelCase(
-                                          widget.complaint['priority'],
+                                          widget.complaint['status'],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  if (widget.complaint['type'] ==
-                                      "private") ...[
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 4,
-                                          ),
-                                          child: Icon(
-                                            Icons.lock_outline,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface,
-                                            size: 23,
-                                          ),
-                                        ),
-                                        SizedBox(width: 3),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 4,
-                                            right: 3,
-                                          ),
-                                          child: Text(
-                                            'Private',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    SizedBox(width: 6),
+                                    _priorityBadge(
+                                      toUpperCamelCase(
+                                        widget.complaint['priority'],
+                                      ),
                                     ),
                                   ],
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10),
-
-                            //badges
-                          ],
-                        ),
-                        //Images
-                        if (widget.complaint['images'].length != 0)
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(15),
-                            child: Image.network(
-                              widget.complaint['images'][0],
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                    if (loadingProgress != null) {
-                                      return Center(
-                                        child: CircularProgressIndicator(
+                                ),
+                                if (widget.complaint['type'] == "private") ...[
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
+                                        child: Icon(
+                                          Icons.lock_outline,
                                           color: Theme.of(
                                             context,
-                                          ).colorScheme.primary,
+                                          ).colorScheme.onSurface,
+                                          size: 23,
                                         ),
-                                      );
-                                    }
-                                    return child;
-                                  },
-                            ),
-                          ),
-                        SizedBox(height: 20), 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            //reported by
-                            Text(
-                              'Reported By : ',
-
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(
-                              Icons.person,
-                              size: 24,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            SizedBox(width: 3),
-                            Text(
-                              widget.complaint['createdBy']['name'],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        widget.complaint['adminRemarks'].toString().isNotEmpty
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 20),
-                                  Text(
-                                    'Admin Remarks :',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      widget.complaint['adminRemarks'],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(fontSize: 18),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : SizedBox(),
-                        SizedBox(height: 20),
-                        //admin side vote counts
-                        user?['role'] == "admin" &&
-                                widget.complaint['type'] != "private"
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      VoteCount(
-                                        title: 'Up Votes:',
-                                        votes: widget.complaint['upvotes'],
                                       ),
-                                      SizedBox(width: 10),
-                                      VoteCount(
-                                        title: 'Down Votes :',
-                                        votes: widget.complaint['downvotes'],
+                                      SizedBox(width: 3),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 4,
+                                          right: 3,
+                                        ),
+                                        child: Text(
+                                          'Private',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ],
-                              )
-                            : widget.complaint['type'] == "private"
-                            ? SizedBox()
-                            : //cast vote buttons
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  UpVoteButton(
-                                    isUpvoted: isUpvoted,
-                                    isDownVoted: isDownvoted,
-                                    onTap: handleUpVote,
-                                  ),
-                                  SizedBox(width: 10),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 10),
 
-                                  DownVoteButton(
-                                    isUpvoted: isUpvoted,
-                                    isDownVoted: isDownvoted,
-                                    onTap: handleDownVote,
+                          //badges
+                        ],
+                      ),
+                      //Images
+                      if (widget.complaint['images'].length != 0)
+                        Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(15),
+                          child: Image.network(
+                            widget.complaint['images'][0],
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress != null) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
-                                ],
-                              ),
-                        SizedBox(height: 10),
-                        user?['role'] == "admin"
-                            ? Column(
-                                children: [
-                                  widget.complaint['adminRemarks']
-                                          .toString()
-                                          .isNotEmpty
-                                      ? SizedBox()
-                                      : Column(
-                                          children: [
-                                            TextField(
-                                              controller: _remarksController,
-                                              maxLength: 200,
-                                              maxLines: null,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              textInputAction:
-                                                  TextInputAction.newline,
-                                              decoration: const InputDecoration(
-                                                labelText: 'Admin Remarks',
+                                );
+                              }
+                              return child;
+                            },
+                          ),
+                        ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          //reported by
+                          Text(
+                            'Reported By : ',
 
-                                                alignLabelWithHint: true,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.person,
+                            size: 24,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                          SizedBox(width: 3),
+                          Text(
+                            widget.complaint['createdBy']['name'],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      widget.complaint['adminRemarks'].toString().isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 20),
+                                Text(
+                                  'Admin Remarks :',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    widget.complaint['adminRemarks'],
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontSize: 18),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+                      SizedBox(height: 20),
+                      //admin side vote counts
+                      user?['role'] == "admin" &&
+                              widget.complaint['type'] != "private"
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    VoteCount(
+                                      title: 'Up Votes:',
+                                      votes: widget.complaint['upvotes'],
+                                    ),
+                                    SizedBox(width: 10),
+                                    VoteCount(
+                                      title: 'Down Votes :',
+                                      votes: widget.complaint['downvotes'],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : widget.complaint['type'] == "private"
+                          ? SizedBox()
+                          : //cast vote buttons
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                UpVoteButton(
+                                  isUpvoted: isUpvoted,
+                                  onTap: handleUpVote,
+                                ),
+                                SizedBox(width: 10),
+
+                                DownVoteButton(
+                                  isDownVoted: isDownvoted,
+                                  onTap: handleDownVote,
+                                ),
+                              ],
+                            ),
+                      SizedBox(height: 10),
+                      user?['role'] == "admin"
+                          ? Column(
+                              children: [
+                                widget.complaint['adminRemarks']
+                                        .toString()
+                                        .isNotEmpty
+                                    ? SizedBox()
+                                    : Column(
+                                        children: [
+                                          TextField(
+                                            controller: _remarksController,
+                                            maxLength: 200,
+                                            maxLines: null,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            textInputAction:
+                                                TextInputAction.newline,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Admin Remarks',
+
+                                              alignLabelWithHint: true,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  patchRemarks(
+                                                    _remarksController.text,
+                                                    widget.complaint['_id'],
+                                                  );
+                                                },
+                                                child: Text('Post Remarks'),
                                               ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                SizedBox(),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    patchRemarks(
-                                                      _remarksController.text,
-                                                      widget.complaint['_id'],
-                                                    );
-                                                  },
-                                                  child: Text('Post Remarks'),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                ],
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                              ],
+                            )
+                          : SizedBox(),
+                    ],
                   ),
                 ),
               ),
+            ),
+            if (isLoading || isAdminLoading || isCheckVotesLoading)
+              Container(
+                color: Colors.black54,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
 
         bottomNavigationBar:
             isAdminLoading && user?['role'] == "admin" ||
