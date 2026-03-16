@@ -65,14 +65,17 @@ class _MyIssuesState extends State<MyIssues> {
                       if (complaint['createdBy']['name'] == user?['name'])
                         RaisedCard(
                           complaint: complaint,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            final response = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     ComplaintDetails(complaint: complaint),
                               ),
                             );
+                            if (response == true) {
+                              fetchComplaints();
+                            }
                           },
                         ),
                   ],

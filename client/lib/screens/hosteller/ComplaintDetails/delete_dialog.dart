@@ -5,11 +5,11 @@ class DeleteDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.message,
-    required this.onConfirm,
+
   });
   final String title;
   final String message;
-  final void Function() onConfirm;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -24,7 +24,7 @@ class DeleteDialog extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            onConfirm();
+
             Navigator.pop(context, true); // close dialog first
           },
           style: ElevatedButton.styleFrom(

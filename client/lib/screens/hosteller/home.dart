@@ -7,7 +7,7 @@ import 'package:client/screens/hosteller/widgets/empty_list.dart';
 import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:client/theme/theme.dart';
 import 'package:client/screens/hosteller/widgets/issue_button.dart';
-
+import 'package:client/util/user_storage.dart';
 import 'package:client/screens/hosteller/widgets/raise_card.dart';
 import 'package:flutter/material.dart';
 import 'package:client/services/api.dart';
@@ -25,6 +25,17 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     fetchComplaints();
+    loadUser();
+  }
+
+  Map<String, dynamic>? user;
+  Future<void> loadUser() async {
+    final userData = await UserStorage.getUser();
+    print(userData);
+    setState(() {
+      user = userData;
+    });
+    debugPrint(userData.toString());
   }
 
   void toAddIssuePage(BuildContext context) {
@@ -48,8 +59,6 @@ class _HomeState extends State<Home> {
       _complaints = data;
       isLoading = false;
     });
-    debugPrint('printing the complaints');
-    debugPrint(_complaints.toString());
   }
 
   void toComplaintDetails(
@@ -77,6 +86,8 @@ class _HomeState extends State<Home> {
         title: const Text(''),
       ),
       body: Container(
+        margin: EdgeInsets.symmetric(horizontal: 5),
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -168,7 +179,10 @@ class _HomeState extends State<Home> {
                   )
                 else
                   for (final complaints in _complaints)
-                    if (complaints['type'] == 'public')
+                    if (complaints['type'] == 'public' &&
+                        complaints['createdBy']['hostelBlock'] ==
+                            user?['hostelBlock'] &&
+                        complaints['status'] != 'resolved')
                       RaisedCard(
                         complaint: complaints,
                         onTap: () {

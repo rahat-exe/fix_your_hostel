@@ -66,9 +66,9 @@ class Api {
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      debugPrint(
-        const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
-      );
+      // debugPrint(
+      //   const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
+      // );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -85,6 +85,31 @@ class Api {
   Future<Map<String, dynamic>> deleteComplaint(String id) async {
     final token = await TokenStorage.get();
     var url = Uri.parse('$baseUrl/$id/issue');
+    try {
+      final response = await http.delete(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      debugPrint(
+        const JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)),
+      );
+      debugPrint(response.statusCode.toString());
+      debugPrint(response.body);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+        return data;
+      } else {
+        throw Exception('Failed to delete complaints');
+      }
+    } catch (e) {
+      print(e);
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteUserComplaint(String id) async {
+    final token = await TokenStorage.get();
+    var url = Uri.parse('$baseUrl/deleteIssue/$id');
     try {
       final response = await http.delete(
         url,

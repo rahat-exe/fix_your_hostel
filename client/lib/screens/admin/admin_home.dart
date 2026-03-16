@@ -75,7 +75,15 @@ class _AdminHomeState extends State<AdminHome> {
   @override
   Widget build(BuildContext context) {
     const spacing = 12.0; // SizedBox width between cards
-
+    final topComplaints =
+        _complaints
+            .where((c) => c['type'] == "public" && c['status'] == "pending")
+            .toList()
+          ..sort((a, b) {
+            int votesA = (a['upvotes'] as List?)?.length ?? 0;
+            int votesB = (b['upvotes'] as List?)?.length ?? 0;
+            return votesB.compareTo(votesA);
+          });
     return Scaffold(
       body: SafeArea(
         child: (isAdminLoading || isComplaintsLoading)
@@ -140,29 +148,24 @@ class _AdminHomeState extends State<AdminHome> {
                         //Urgent Issues List
                         ListView.builder(
                           itemBuilder: (context, index) {
-                            var complaint = _complaints[index];
+                            var complaint = topComplaints[index];
 
-                            return complaint?['type'] == "public" &&
-                                    complaint?['status'] == "pending"
-                                ? IssueCard(
-                                    complaint: complaint,
-                                    onTap: () {
-                                      toComplaintDetails(complaint);
-                                    },
-                                  )
-                                : Container();
+                            return IssueCard(
+                              complaint: complaint,
+                              onTap: () {
+                                toComplaintDetails(complaint);
+                              },
+                            );
                           },
                           itemCount: isComplaintsLoading
                               ? 0
-                              : (_complaints.length >= 3
-                                    ? 3
-                                    : _complaints.length),
+                              : topComplaints.length,
                           shrinkWrap: true,
 
                           physics: NeverScrollableScrollPhysics(),
                         ),
                         SizedBox(height: 10),
-                        const Divider(thickness: 1, color: Colors.grey), 
+                        const Divider(thickness: 1, color: Colors.grey),
                         QuickButton(
                           title: 'View All Complaints',
                           icon: Icons.list_sharp,

@@ -1,11 +1,11 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'dart:async';
 import 'package:client/screens/hosteller/ComplaintDetails/delete_dialog.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/down_vote_button.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/pop_menu.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/up_vote_button.dart';
 import 'package:client/screens/hosteller/ComplaintDetails/vote_count.dart';
-import 'package:client/screens/hosteller/widgets/progress_indicator.dart';
 import 'package:client/services/api.dart';
 import 'package:client/services/votes.dart';
 import 'package:client/theme/theme.dart';
@@ -65,18 +65,51 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
     if (!mounted) return;
     debugPrint(response.toString());
     if (response['success'] == "true" || response['success'] == true) {
+      Navigator.pop(context, true);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             response["message"],
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white70, fontSize: 20),
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),
           backgroundColor: AppColors.bgLight,
         ),
       );
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response['message'] ?? "Error occured",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 15),
+          ),
+          backgroundColor: AppColors.bgLight,
+        ),
+      );
+    }
+  }
+
+  void _deleteUserComplaint() async {
+    Api api = Api();
+    final response = await api.deleteUserComplaint(widget.complaint['_id']);
+    if (!mounted) return;
+    debugPrint(response.toString());
+    if (response['success'] == "true" || response['success'] == true) {
       Navigator.pop(context, true);
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response["message"],
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+          backgroundColor: AppColors.bgLight,
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -211,6 +244,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           backgroundColor: AppColors.bgLight,
         ),
       );
+      debugPrint('UpVoted Successfully');
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -225,7 +259,6 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
       );
     }
     debugPrint(response.toString());
-    debugPrint('UpVoted Successfully');
   }
 
   Future<void> handleDownVote() async {
@@ -257,6 +290,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           backgroundColor: AppColors.bgLight,
         ),
       );
+      debugPrint('Down Voted Successfully');
     } else {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -271,7 +305,6 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
       );
     }
     debugPrint(response.toString());
-    debugPrint('Down Voted Successfully');
   }
 
   String toUpperCamelCase(String text) {
@@ -283,6 +316,22 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
               : '',
         )
         .join(' ');
+  }
+
+  Future<double> _getNetworkImageRatio(String url) async {
+    final image = Image.network(url);
+    final completer = Completer<ImageInfo>();
+
+    image.image
+        .resolve(const ImageConfiguration())
+        .addListener(
+          ImageStreamListener((ImageInfo info, bool _) {
+            completer.complete(info);
+          }),
+        );
+
+    final imageInfo = await completer.future;
+    return imageInfo.image.width / imageInfo.image.height;
   }
 
   @override
@@ -379,7 +428,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                                     SizedBox(width: 6),
                                     _priorityBadge(
                                       toUpperCamelCase(
-                                        widget.complaint['priority'],
+                                        "Block : ${widget.complaint['createdBy']['hostelBlock'] ?? "Undefined"}",
                                       ),
                                     ),
                                   ],
@@ -424,27 +473,41 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                           //badges
                         ],
                       ),
-                      //Images
-                      if (widget.complaint['images'].length != 0)
+                      if (widget.complaint['images'].length != 0) ...[
+                        SizedBox(height: 20),
                         Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.all(15),
-                          child: Image.network(
-                            widget.complaint['images'][0],
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress != null) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: FutureBuilder(
+                            future: _getNetworkImageRatio(
+                              widget.complaint['images'][0],
+                            ),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
                                   ),
                                 );
                               }
-                              return child;
+                              return AspectRatio(
+                                aspectRatio: snapshot.data!,
+                                child: Image.network(
+                                  widget.complaint['images'][0],
+                                  fit: BoxFit.contain,
+                                ),
+                              );
                             },
                           ),
                         ),
+                      ],
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -619,11 +682,12 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                               title: "Delete Complaint",
                               message:
                                   "Are you sure you want to delete this complaint",
-                              onConfirm: _deleteComplaint,
                             ),
                           );
                           if (response == true) {
-                            _deleteComplaint();
+                            user?['role'] == "admin"
+                                ? _deleteComplaint()
+                                : _deleteUserComplaint();
                           }
                         },
                         child: const Text('Delete'),

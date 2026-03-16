@@ -104,6 +104,11 @@ class _AddIssue extends State<AddIssue> {
     );
   }
 
+  Future<double> _getImageRatio(File file) async {
+    final decodedImage = await decodeImageFromList(await file.readAsBytes());
+    return decodedImage.width / decodedImage.height;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +130,6 @@ class _AddIssue extends State<AddIssue> {
                       style: TextStyle(),
                       decoration: InputDecoration(
                         label: Text('Issue title'),
-
                         hintText: 'Enter the Issue title',
                       ),
                       validator: (value) {
@@ -215,19 +219,26 @@ class _AddIssue extends State<AddIssue> {
                             ).colorScheme.primary.withValues(alpha: 0.4),
                           ),
                         ),
-                        height: 350,
-                        width: 200,
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Image.file(
-                            selectedImage!,
-                            filterQuality: FilterQuality.high,
+                        child: FutureBuilder(
+                          future: _getImageRatio(selectedImage!),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox(
+                                height: 200,
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
 
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
+                            return AspectRatio(
+                              aspectRatio: snapshot.data!,
+                              child: Image.file(
+                                selectedImage!,
+                                fit: BoxFit.contain,
+                              ),
+                            );
+                          },
                         ),
                       ),
                       SizedBox(height: 20),
