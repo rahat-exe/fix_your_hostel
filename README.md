@@ -19,6 +19,19 @@ Admins can track the hostel complaints resolutions in his home page and can see 
 - Backend : Node.js, express.js
 - Database : MongoDB
 - Other tools : Cloudinary
+## Screenshots 
+ - Admin
+<br>[Admin Dashboard](screenshots/admin_home.jpeg)<br>
+[Admin Complaint](screenshots/admin_complaint.jpeg)<br>
+[Admin Private Complaint Details](screenshots/admin_private_complaints_details.jpeg)<br>
+[Admin Public Complaint Details](screenshots/admin_public_complaints_details.jpeg)<br>
+[Admin Approval](screenshots/admin_approval.jpeg)<br>
+ - Hosteller
+<br>[Hosteller Dashboard](screenshots/hosteller_home.jpeg)<br>
+[Hosteller Add Issue](screenshots/hosteller_add_issue.jpeg)<br>
+[Hosteller Waiting](screenshots/hosteller_waiting.jpeg)<br>
+[Hosteller Account](screenshots/hosteller_account.jpeg)<br>
+
 ## Installation
 Follow these steps to run the project locally
 ### Prerequisites 
