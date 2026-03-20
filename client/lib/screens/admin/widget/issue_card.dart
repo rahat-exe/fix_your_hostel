@@ -125,7 +125,7 @@ class IssueCard extends StatelessWidget {
                               ),
                               SizedBox(width: 6),
                               _priorityBadge(
-                                "Block : ${toUpperCamelCase(complaint?['hostelBlock'] ?? "Undefined")}",
+                                "Block : ${toUpperCamelCase(complaint?['createdBy  ']['hostelBlock'] ?? "Undefined")}",
                               ),
                             ],
                           ),

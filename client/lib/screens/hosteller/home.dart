@@ -38,16 +38,22 @@ class _HomeState extends State<Home> {
     debugPrint(userData.toString());
   }
 
-  void toAddIssuePage(BuildContext context) {
-    Navigator.of(
+  void toAddIssuePage(BuildContext context) async {
+    final response = await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (ctx) => const AddIssue()));
+    if (response == true) {
+      fetchComplaints();
+    }
   }
 
-  void toAddComplaintPage(BuildContext context) {
-    Navigator.of(
+  void toAddComplaintPage(BuildContext context) async {
+    final response = await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (ctx) => AddComplaint()));
+    if (response == true) {
+      fetchComplaints();
+    }
   }
 
   List<dynamic> _complaints = [];

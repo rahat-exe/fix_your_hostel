@@ -47,6 +47,12 @@ class _AddIssue extends State<AddIssue> {
       );
       return;
     }
+    if (selectedImage == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please add the image')));
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -69,8 +75,8 @@ class _AddIssue extends State<AddIssue> {
           return DialogBox(
             message: "Complaint Submitted Successfully",
             onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context, true);
+              Navigator.pop(context, true);
             },
           );
         },

@@ -32,10 +32,90 @@ class _ImageInput extends State<ImageInput> {
     widget.onSelectImage(_selectedImage!);
   }
 
+  Future<void> _pickFromGallery() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+
+      imageQuality: 100,
+    );
+    if (pickedImage == null) {
+      return;
+    }
+    setState(() {
+      _selectedImage = File(pickedImage.path);
+    });
+    widget.onSelectImage(_selectedImage!);
+  }
+
+  void _showImageSourceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          "Select Image",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _pickFromGallery();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                minimumSize: Size(250, 50),
+              ),
+              icon: Icon(
+                Icons.photo,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              label: Text(
+                "Choose from Gallery",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _takeImage();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                minimumSize: Size(250, 50),
+              ),
+              icon: Icon(
+                Icons.camera_alt,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              label: Text(
+                "Click Image",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content = OutlinedButton.icon(
-      onPressed: _takeImage,
+      onPressed: () {
+        _showImageSourceDialog(context);
+      },
       icon: const Icon(Icons.image_outlined),
       label: const Text('Add Images'),
       style: OutlinedButton.styleFrom(

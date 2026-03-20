@@ -67,8 +67,8 @@ class _AddComplaintState extends State<AddComplaint> {
           return DialogBox(
             message: "Complaint Submitted Successfully",
             onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context, true);
+              Navigator.pop(context, true);
             },
           );
         },
@@ -82,6 +82,11 @@ class _AddComplaintState extends State<AddComplaint> {
         ),
       );
     }
+  }
+
+  Future<double> _getImageRatio(File file) async {
+    final decodedImage = await decodeImageFromList(await file.readAsBytes());
+    return decodedImage.width / decodedImage.height;
   }
 
   void showLoadingDialog(BuildContext context) {
@@ -204,23 +209,29 @@ class _AddComplaintState extends State<AddComplaint> {
                           ).colorScheme.primary.withValues(alpha: 0.4),
                         ),
                       ),
-                      height: 350,
-                      width: 200,
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Image.file(
-                          selectedImage!,
-                          filterQuality: FilterQuality.high,
+                      child: FutureBuilder(
+                        future: _getImageRatio(selectedImage!),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const SizedBox(
+                              height: 200,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
 
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
+                          return AspectRatio(
+                            aspectRatio: snapshot.data!,
+                            child: Image.file(
+                              selectedImage!,
+                              fit: BoxFit.contain,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: 20),
                   ],
+
                   SizedBox(
                     height: 50,
                     width: double.infinity,
