@@ -4,27 +4,20 @@ export function useCreateIssue(){
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({title, description, type, category}) =>{
+        mutationFn: async (formData) =>{
             const res = await fetch(
               "http://localhost:5000/api/issue/createIssue",
               {
                 method: "POST",
                 headers: {
-                  "Content-Type": "application/json",
                   authorization: "Bearer " + localStorage.getItem("token"),
                 },
-                body: JSON.stringify({
-                  title,
-                  description,
-                  type,
-                  category,
-                }),
+                body: formData,
               },
             );
             if(!res.ok){
                 throw new Error("Failed to create issue")
             }
-            // console.log(res.json())
             return res.json();
         },
         onSuccess:()=>{

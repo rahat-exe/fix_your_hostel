@@ -12,18 +12,13 @@ const AddIssue =  () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const title = data.get('title');
-    const description = data.get('description');
-    const type = data.get('type');
-    const category = data.get('category');
-
-    console.log(title, description, type, category);
-
-    mutate({ title, description, type, category });
-
-    console.log(data)
-
     
+    // Log form data entries for debugging
+    for (let [key, value] of data.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+
+    mutate(data);
   }
   return (
     <div>

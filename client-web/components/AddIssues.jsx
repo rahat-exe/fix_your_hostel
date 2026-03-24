@@ -73,6 +73,18 @@ const AddIssueForm = ({ handleSubmit, isPending }) => {
                 disabled={isPending}
               />
             </div>
+
+             {/* Image Upload */}
+             <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="image">Image (Optional)</Label>
+              <Input
+                id="image"
+                name="image"
+                type="file"
+                accept="image/*"
+                disabled={isPending}
+              />
+            </div>
           </div>
 
           <Button
