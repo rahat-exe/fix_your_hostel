@@ -18,7 +18,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
   void _logout() {
     UserStorage.clear();
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Register()));
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (ctx) => Register()),
+      (route) => false,
+    );
   }
 
   Map<String, dynamic>? user;

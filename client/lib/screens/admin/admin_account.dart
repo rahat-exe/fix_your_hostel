@@ -19,7 +19,10 @@ class _AdminAccountState extends State<AdminAccount> {
 
   void _logout() {
     UserStorage.clear();
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Register()));
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (ctx) => Register()),
+      (route) => false,
+    );
   }
 
   Map<String, dynamic>? user;

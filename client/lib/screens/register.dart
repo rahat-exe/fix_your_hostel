@@ -72,7 +72,11 @@ class _Register extends State<Register> {
         //if not approved then redirect to wait page
         if (response['message'] == "You are not approved yet") {
           if (!mounted) return;
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) => Wait()));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (ctx) => Wait()),
+            (route) => false,
+          );
           return;
         }
       } else {
@@ -112,253 +116,289 @@ class _Register extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
 
-            children: [
-              Card(
-                margin: EdgeInsets.all(15),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.symmetric(
-                      horizontal: 15,
-                      vertical: 8,
-                    ),
-                    child: Form(
-                      key: _form,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(height: 8),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/hotel.png', width: 70),
-                              SizedBox(height: 15),
-                              Text(
-                                "Fix Your Hostel",
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25,
+        final shouldExit = await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Exit App"),
+            content: Text("Are you sure you want to exit ?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text("No"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text("Yes"),
+              ),
+            ],
+          ),
+        );
+        if (!mounted) return;
+        if (shouldExit == true) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+                Card(
+                  margin: EdgeInsets.all(15),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 15,
+                        vertical: 8,
+                      ),
+                      child: Form(
+                        key: _form,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(height: 8),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/hotel.png', width: 70),
+                                SizedBox(height: 15),
+                                Text(
+                                  "Fix Your Hostel",
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            // if (!isLogin)
+                            //   ImageInput(
+                            //     onSelectImage: (pickedImage) {
+                            //       _selectedImage = pickedImage;
+                            //     },
+                            //   ),
+                            //name
+                            SizedBox(height: 7),
+                            if (!isLogin)
+                              TextFormField(
+                                controller: nameController,
+                                decoration: InputDecoration(
+                                  label: Text('Name'),
+                                ),
+                                enableSuggestions: false,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().isEmpty ||
+                                      value.length < 4) {
+                                    return 'Username must contain atleast 4 characters';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ],
-                          ),
-                          // if (!isLogin)
-                          //   ImageInput(
-                          //     onSelectImage: (pickedImage) {
-                          //       _selectedImage = pickedImage;
-                          //     },
-                          //   ),
-                          //name
-                          SizedBox(height: 7),
-                          if (!isLogin)
+                            //email
                             TextFormField(
-                              controller: nameController,
-                              decoration: InputDecoration(label: Text('Name')),
-                              enableSuggestions: false,
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                label: Text('Email address'),
+                              ),
+                              autocorrect: false,
+                              keyboardType: TextInputType.emailAddress,
+                              textCapitalization: TextCapitalization.none,
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty ||
-                                    value.length < 4) {
-                                  return 'Username must contain atleast 4 characters';
+                                    !value.contains('@')) {
+                                  return 'Enter a valid email address';
                                 }
                                 return null;
                               },
                             ),
-                          //email
-                          TextFormField(
-                            controller: emailController,
-                            decoration: InputDecoration(
-                              label: Text('Email address'),
-                            ),
-                            autocorrect: false,
-                            keyboardType: TextInputType.emailAddress,
-                            textCapitalization: TextCapitalization.none,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.trim().isEmpty ||
-                                  !value.contains('@')) {
-                                return 'Enter a valid email address';
-                              }
-                              return null;
-                            },
-                          ),
-                          //password
-                          TextFormField(
-                            controller: passController,
-                            decoration: InputDecoration(
-                              label: Text('Password'),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  hidePassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                            //password
+                            TextFormField(
+                              controller: passController,
+                              decoration: InputDecoration(
+                                label: Text('Password'),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    hidePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    hidePassword = !hidePassword;
-                                  });
+                              ),
+                              autocorrect: false,
+                              obscureText: hidePassword,
+                              validator: (value) {
+                                if (value == null || value.length < 6) {
+                                  return 'Password length must be above 6';
+                                }
+                                return null;
+                              },
+                            ),
+                            //confirm password
+                            if (!isLogin)
+                              TextFormField(
+                                controller: confirmPassController,
+                                decoration: InputDecoration(
+                                  label: Text('Confirm Password'),
+                                ),
+                                autocorrect: false,
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Password is empty';
+                                  }
+                                  if (value != passController.text) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
                                 },
                               ),
-                            ),
-                            autocorrect: false,
-                            obscureText: hidePassword,
-                            validator: (value) {
-                              if (value == null || value.length < 6) {
-                                return 'Password length must be above 6';
-                              }
-                              return null;
-                            },
-                          ),
-                          //confirm password
-                          if (!isLogin)
-                            TextFormField(
-                              controller: confirmPassController,
-                              decoration: InputDecoration(
-                                label: Text('Confirm Password'),
-                              ),
-                              autocorrect: false,
-                              obscureText: true,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Password is empty';
-                                }
-                                if (value != passController.text) {
-                                  return 'Passwords do not match';
-                                }
-                                return null;
-                              },
-                            ),
-                          //roll no
-                          if (!isLogin)
-                            TextFormField(
-                              controller: rollNoController,
-                              decoration: InputDecoration(
-                                label: Text('Roll No'),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Enter a valid roll number';
-                                }
-                                return null;
-                              },
-                            ),
-                          //hostel block
-                          if (!isLogin)
-                            TextFormField(
-                              controller: hostelBlockController,
-                              decoration: InputDecoration(
-                                label: Text('Hostel Block'),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Enter a valid hostel block';
-                                }
-                                return null;
-                              },
-                            ),
-                          //room no
-                          if (!isLogin)
-                            TextFormField(
-                              controller: roomNoController,
-                              decoration: InputDecoration(
-                                label: Text('Room No'),
-                              ),
-                              autocorrect: false,
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Enter a valid room number';
-                                }
-                                return null;
-                              },
-                            ),
-                          SizedBox(height: 25),
-
-                          SizedBox(
-                            height: 50,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
+                            //roll no
+                            if (!isLogin)
+                              TextFormField(
+                                controller: rollNoController,
+                                decoration: InputDecoration(
+                                  label: Text('Roll No'),
                                 ),
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary,
-                                fixedSize: Size(120, 50),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Enter a valid roll number';
+                                  }
+                                  return null;
+                                },
                               ),
-                              onPressed: _submit,
-                              child: Text(
-                                isLogin ? 'Login' : 'Sign Up',
-                                style: Theme.of(context).textTheme.bodyMedium!
-                                    .copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSecondary,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                            //hostel block
+                            if (!isLogin)
+                              TextFormField(
+                                controller: hostelBlockController,
+                                decoration: InputDecoration(
+                                  label: Text('Hostel Block'),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Enter a valid hostel block';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            //room no
+                            if (!isLogin)
+                              TextFormField(
+                                controller: roomNoController,
+                                decoration: InputDecoration(
+                                  label: Text('Room No'),
+                                ),
+                                autocorrect: false,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Enter a valid room number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            SizedBox(height: 25),
+
+                            SizedBox(
+                              height: 50,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: TextButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  fixedSize: Size(120, 50),
+                                ),
+                                onPressed: _submit,
+                                child: Text(
+                                  isLogin ? 'Login' : 'Sign Up',
+                                  style: Theme.of(context).textTheme.bodyMedium!
+                                      .copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSecondary,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          isLogin
-                              ? Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("Don't have an account?"),
-                                    SizedBox(width: 3),
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: Size(0, 0),
+                            SizedBox(height: 10),
+                            isLogin
+                                ? Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("Don't have an account?"),
+                                      SizedBox(width: 3),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size(0, 0),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            isLogin = !isLogin;
+                                          });
+                                        },
+                                        child: Text("SIGN UP"),
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          isLogin = !isLogin;
-                                        });
-                                      },
-                                      child: Text("SIGN UP"),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                    ],
+                                  )
+                                : Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
 
-                                  children: [
-                                    Text("Already have an account?"),
-                                    SizedBox(width: 3),
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          isLogin = !isLogin;
-                                        });
-                                      },
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: Size(0, 0),
+                                    children: [
+                                      Text("Already have an account?"),
+                                      SizedBox(width: 3),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            isLogin = !isLogin;
+                                          });
+                                        },
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size(0, 0),
+                                        ),
+                                        child: Text("LOG IN"),
                                       ),
-                                      child: Text("LOG IN"),
-                                    ),
-                                  ],
-                                ),
-                        ],
+                                    ],
+                                  ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
