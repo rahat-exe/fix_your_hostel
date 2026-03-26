@@ -99,12 +99,25 @@ class _AdminHomeState extends State<AdminHome> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Welcome ${admin?['name']}',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'Welcome',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 7),
+                            Text(
+                              '${admin?['name']}',
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.orange[700],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 20),
                         // Cards Section
@@ -189,22 +202,22 @@ class _AdminHomeState extends State<AdminHome> {
                             );
                           },
                         ),
-                        QuickButton(
-                          title: 'Send Announcement',
-                          icon: Icons.send_outlined,
-                          onTap: () {},
-                        ),
-                        QuickButton(
-                          title: 'Insights',
-                          icon: Icons.insights_outlined,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (ctx) => AdminInsights(),
-                              ),
-                            );
-                          },
-                        ),
+                        // QuickButton(
+                        //   title: 'Send Announcement',
+                        //   icon: Icons.send_outlined,
+                        //   onTap: () {},
+                        // ),
+                        // QuickButton(
+                        //   title: 'Insights',
+                        //   icon: Icons.insights_outlined,
+                        //   onTap: () {
+                        //     Navigator.of(context).push(
+                        //       MaterialPageRoute(
+                        //         builder: (ctx) => AdminInsights(),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                         const Divider(thickness: 1, color: Colors.grey),
                       ],
                     ),

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 class Votes {
   Votes({required this.complaintId});
   final String complaintId;
-  String get baseUrl => 'http://localhost:5000/api/issue/$complaintId';
+  String get baseUrl => 'http://localhost:8000/api/issue/$complaintId';
   Future<Map<String, dynamic>> upVote() async {
     final token = await TokenStorage.get();
     var url = Uri.parse('$baseUrl/upvotes');

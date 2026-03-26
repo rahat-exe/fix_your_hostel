@@ -44,7 +44,19 @@ class CardBox extends StatelessWidget {
           SizedBox(height: 10),
           Text(
             count.toString(),
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: title == "Pending"
+                  ? Colors.yellow
+                  : title == "In progress"
+                  ? Colors.blue
+                  : title == "Resolved"
+                  ? Colors.green
+                  : title == "Total Issues"
+                  ? Colors.orange
+                  : Colors.black,
+            ),
           ),
         ],
       ),

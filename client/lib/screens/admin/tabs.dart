@@ -44,10 +44,10 @@ class _TabsState extends State<Tabs> {
                 icon: Icon(Icons.list),
                 label: 'Complaints',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.insights_sharp),
-                label: 'Insights',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.insights_sharp),
+              //   label: 'Insights',
+              // ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_2_outlined),
                 label: 'Account',

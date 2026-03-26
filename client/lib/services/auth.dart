@@ -3,7 +3,7 @@ import 'package:client/util/token_storage.dart';
 import 'package:http/http.dart' as http;
 
 class Auth {
-  static const String baseUrl = 'http://localhost:5000/api/auth';
+  static const String baseUrl = 'http://localhost:8000/api/auth';
   static Future<Map<String, dynamic>> register(
     Map<String, dynamic> userData,
   ) async {

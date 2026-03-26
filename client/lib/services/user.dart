@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class UserApi {
-  static const String baseUrl = "http://localhost:5000/api/users";
+  static const String baseUrl = "http://localhost:8000/api/users";
   Future<Map<String, dynamic>> getAllUsers() async {
     final token = await TokenStorage.get();
     var url = Uri.parse('$baseUrl/users');
