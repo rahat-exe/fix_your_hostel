@@ -15,16 +15,15 @@ export const createIssue = async (req, res) => {
         .json({ message: "Title and type is required" });
     }
 
-    let result
-    if(req.file){
-      let result
-      console.log(req.file);
-      result = await uploadToCloudinary(req.file.buffer);
-      console.log(result);
-    }
-    
-   
-    const uploadedImage = result.secure_url;
+   let result;
+
+if (req.file) {
+  console.log(req.file);
+  result = await uploadToCloudinary(req.file.buffer); // ✅ assign to outer
+  console.log(result);
+}
+
+const uploadedImage = result?.secure_url; // ✅ safe access
 
     const issue = await Issue.create({
       title,

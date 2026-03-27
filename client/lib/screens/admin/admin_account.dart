@@ -48,24 +48,78 @@ class _AdminAccountState extends State<AdminAccount> {
               child: Column(
                 children: [
                   SizedBox(height: 30),
-                  Column(
-                    children: [
-                      Text(
-                        user?['name'] ?? 'Unknown User',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Email - ${user?['email']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey.withValues(alpha: 0.9),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Avatar
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.1),
+                          child: Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
-                      ),
-                    ],
+
+                        SizedBox(width: 16),
+
+                        // User Info
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?['name'] ?? 'Unknown User',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+
+                              SizedBox(height: 6),
+
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.email,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      user?['email'] ?? 'No email',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 10),
                   const Divider(),

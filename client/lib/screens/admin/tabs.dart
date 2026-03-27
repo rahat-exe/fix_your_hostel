@@ -19,7 +19,7 @@ class _TabsState extends State<Tabs> {
     List<Widget> _pages = [
       AdminHome(),
       AdminComplaint(),
-      AdminInsights(),
+      // AdminInsights(),
       AdminAccount(),
     ];
     return Scaffold(

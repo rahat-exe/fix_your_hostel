@@ -667,7 +667,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
         ),
 
         bottomNavigationBar:
-            isAdminLoading && user?['role'] == "admin" ||
+            !isAdminLoading && user?['role'] == "admin" ||
                 widget.complaint['createdBy']['email'] == user?['email']
             ? Padding(
                 padding: EdgeInsets.symmetric(vertical: 22, horizontal: 10),

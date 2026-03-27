@@ -41,29 +41,73 @@ class _AccountScreenState extends State<AccountScreen> {
         child: Column(
           children: [
             SizedBox(height: 30),
-            Column(
-              children: [
-                Text(
-                  user?['name'] ?? 'Unknown User',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Email - ${user?['email']}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.withValues(alpha: 0.9),
+            Container(
+              padding: EdgeInsets.all(18),
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 12,
+                    offset: Offset(0, 5),
                   ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Hostel Address - ${user?['hostelBlock']}, ${user?['roomNumber']}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.withValues(alpha: 0.9),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 👤 Name
+                  Text(
+                    user?['name'] ?? 'Unknown User',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
                   ),
-                ),
-              ],
+
+                  SizedBox(height: 14),
+
+                  // 📧 Email
+                  Row(
+                    children: [
+                      Icon(Icons.email_outlined, size: 18, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          user?['email'] ?? 'No email',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey.shade600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10),
+
+                  // 🏠 Hostel Address
+                  Row(
+                    children: [
+                      Icon(Icons.home_outlined, size: 18, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "${user?['hostelBlock'] ?? '-'}, Room ${user?['roomNumber'] ?? '-'}",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 10),
             const Divider(),
